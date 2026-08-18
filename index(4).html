@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Little Cup Café — Order Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3E9E1;
+    --card: #FFFCF7;
+    --ink: #46362F;
+    --ink-soft: #8A7A72;
+    --rose: #C1808B;
+    --rose-deep: #9C5D68;
+    --sage: #8CA178;
+    --line: rgba(70,54,47,0.14);
+    --shadow: 0 10px 28px rgba(70,54,47,0.14);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Karla', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: 'Karla', sans-serif; }
+  svg { display: block; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 88px 0; position: relative; }
+  .section-eyebrow { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); font-weight: 700; margin-bottom: 10px; }
+  .section-header { max-width: 620px; margin: 0 auto 48px; text-align: center; }
+  .section-header h2 { font-size: 2.1rem; font-style: italic; margin-bottom: 10px; }
+  .section-header p { color: var(--ink-soft); font-size: 1rem; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2.5px solid var(--rose-deep); outline-offset: 2px;
+  }
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* Sprig signature motif */
+  .sprig-stem { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-stem 1.2s ease-out forwards; }
+  .sprig-leaf, .sprig-bud { opacity: 0; transform-origin: center; transform: scale(0.3); animation: pop-leaf 0.5s ease-out forwards; }
+  @keyframes draw-stem { to { stroke-dashoffset: 0; } }
+  @keyframes pop-leaf { to { opacity: 0.85; transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .sprig-stem, .sprig-leaf, .sprig-bud { animation: none; stroke-dashoffset: 0; opacity: 0.85; transform: scale(1); }
+  }
+  .deco-sprig { position: absolute; }
+
+  /* Announcement bar */
+  .announcement-bar { background: var(--rose-deep); color: var(--card); padding: 12px 24px; text-align: center; }
+  .announcement-bar p { font-size: 0.88rem; font-weight: 600; }
+  .announcement-bar strong { text-decoration: underline; }
+
+  /* Nav */
+  header.nav { position: sticky; top: 0; z-index: 100; background: rgba(243,233,225,0.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; max-width: 1080px; margin: 0 auto; }
+  .logo { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; font-size: 1.5rem; }
+  .nav-links { display: flex; gap: 26px; align-items: center; }
+  .nav-links a { font-weight: 600; font-size: 0.88rem; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: border-color 0.2s; }
+  .nav-links a:hover { border-color: var(--rose-deep); }
+  .nav-cart { font-weight: 700; font-size: 0.88rem; border-bottom: 1px solid var(--ink); padding-bottom: 2px; background: none; border-top: none; border-left: none; border-right: none; color: var(--ink); }
+
+  /* Buttons */
+  .btn-primary { display: inline-block; background: var(--rose); color: var(--card); padding: 13px 28px; border-radius: 999px; font-weight: 700; font-size: 0.92rem; border: none; box-shadow: var(--shadow); transition: transform 0.2s, background 0.2s; }
+  .btn-primary:hover { background: var(--rose-deep); transform: translateY(-2px); }
+  .btn-secondary { display: inline-block; background: transparent; color: var(--rose-deep); padding: 13px 28px; border-radius: 999px; font-weight: 700; font-size: 0.92rem; border: 1.5px solid var(--rose); transition: all 0.2s; }
+  .btn-secondary:hover { background: var(--rose); color: var(--card); }
+
+  /* Hero */
+  .hero { padding: 96px 24px 120px; overflow: hidden; }
+  .hero-inner { max-width: 640px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+  .hero h1 { font-size: 3.4rem; font-style: italic; font-weight: 500; margin-bottom: 18px; }
+  .hero p { font-size: 1.08rem; color: var(--ink-soft); margin-bottom: 34px; }
+  .hero p strong { color: var(--rose-deep); font-weight: 700; }
+  .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .hero .deco-sprig.top-left { top: -10px; left: -10px; width: 90px; color: var(--sage); }
+  .hero .deco-sprig.bottom-right { bottom: -10px; right: 0; width: 110px; color: var(--rose); transform: scaleX(-1); }
+
+  /* Category filters */
+  .category-filters { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 44px; }
+  .cat-btn { padding: 8px 20px; border: 1px solid var(--rose); border-radius: 999px; background: transparent; color: var(--rose-deep); font-weight: 600; font-size: 0.85rem; transition: all 0.2s; }
+  .cat-btn.active, .cat-btn:hover { background: var(--rose); color: var(--card); }
+
+  /* Menu grid */
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; }
+  .menu-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 20px; display: flex; flex-direction: column; }
+  .menu-card.unavailable { opacity: 0.55; }
+  .seasonal-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--sage); margin-bottom: 6px; }
+  .seasonal-tag::before { content: '— '; }
+  .gf-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--rose-deep); margin-right: 10px; margin-bottom: 6px; display: inline-block; }
+  .section-header p.allergen-note { color: var(--rose-deep); font-weight: 600; }
+  .card-note { font-size: 0.8rem; color: var(--ink-soft); font-style: italic; margin-bottom: 10px; }
+  .menu-card h3 { font-size: 1.18rem; font-style: italic; padding-bottom: 10px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+  .menu-card .desc { color: var(--ink-soft); font-size: 0.9rem; margin-bottom: 16px; flex-grow: 1; }
+  .menu-card .price { font-family: 'Fraunces', serif; font-size: 1.25rem; color: var(--rose-deep); margin-bottom: 16px; }
+  .unavailable-tag { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+  .stepper { display: flex; align-items: center; gap: 14px; }
+  .stepper button { width: 28px; height: 28px; border: 1px solid var(--rose); border-radius: 4px; background: transparent; color: var(--rose-deep); font-size: 1.05rem; font-weight: 700; transition: all 0.2s; }
+  .stepper button:hover { background: var(--rose); color: var(--card); }
+  .addon-checkbox { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--ink-soft); font-weight: 600; margin-top: 6px; }
+  .addon-checkbox input[type="checkbox"] { width: auto; }
+  .stepper span { min-width: 18px; text-align: center; font-weight: 700; }
+  .enquire-only-btn { width: 100%; text-align: center; background: transparent; border: 1px solid var(--sage); color: var(--sage); padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; transition: all 0.2s; }
+  .enquire-only-btn:hover { background: var(--sage); color: var(--card); }
+  .brownie-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .brownie-row:first-of-type { border-top: none; padding-top: 0; }
+  .option-label { font-weight: 600; font-size: 0.92rem; color: var(--rose-deep); }
+  .option-note { font-size: 0.78rem; color: var(--ink-soft); margin-top: 2px; }
+  .empty-category { grid-column: 1 / -1; text-align: center; color: var(--ink-soft); font-style: italic; padding: 30px 0; }
+  .flavour-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .flavour-chip { background: rgba(140,161,120,0.14); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; color: var(--ink); }
+  .item-photo { width: 100%; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 14px; display: block; background: var(--bg); }
+
+  /* Gallery */
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+  .gallery-item { border-radius: var(--radius); overflow: hidden; background: var(--card); box-shadow: var(--shadow); }
+  .gallery-item img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .gallery-item figcaption { padding: 10px 14px; font-size: 0.85rem; color: var(--ink-soft); font-style: italic; }
+
+  /* Admin photo controls */
+  .photo-editor-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); width: 100%; font-size: 0.82rem; }
+  .photo-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+  .admin-gallery-item { display: flex; align-items: center; gap: 14px; background: var(--card); padding: 12px 16px; border-radius: 6px; margin-bottom: 8px; }
+  .admin-gallery-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+  .admin-gallery-item p { font-size: 0.88rem; margin-bottom: 6px; }
+  #adminGalleryUpload { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+  #adminGalleryUpload input[type="text"] { width: 180px; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--line); }
+
+  /* Cart bar */
+  .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--rose-deep); color: var(--card); padding: 16px 24px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 -8px 24px rgba(0,0,0,0.16); }
+  .cart-bar span { font-weight: 600; font-size: 0.92rem; }
+  .cart-bar button { background: var(--card); color: var(--rose-deep); padding: 9px 20px; border: none; border-radius: 999px; font-weight: 700; font-size: 0.88rem; }
+
+  /* Order section */
+  .order-layout { display: grid; grid-template-columns: 1fr 1.3fr; gap: 36px; align-items: start; }
+  .order-summary-box { background: var(--card); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); position: sticky; top: 96px; }
+  .order-summary-box h3 { font-size: 1.1rem; font-style: italic; margin-bottom: 14px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+  .summary-row.total { font-weight: 700; font-size: 1.05rem; border-bottom: none; padding-top: 14px; color: var(--rose-deep); }
+  .empty-note { color: var(--ink-soft); font-size: 0.9rem; font-style: italic; }
+  form label { display: block; margin-bottom: 16px; font-weight: 600; font-size: 0.88rem; }
+  form input, form select, form textarea { width: 100%; margin-top: 6px; padding: 11px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 0.94rem; }
+  form input:focus, form select:focus, form textarea:focus { outline: none; border-color: var(--rose); }
+  form textarea { resize: vertical; min-height: 80px; }
+
+  .enquiry-form { max-width: 560px; margin: 0 auto; background: var(--card); padding: 32px; border-radius: var(--radius); box-shadow: var(--shadow); }
+
+  /* About */
+  .about-section p { max-width: 600px; margin: 0 auto 16px; text-align: center; color: var(--ink-soft); }
+
+  /* Footer */
+  footer { background: linear-gradient(160deg, #EADFD4 0%, var(--bg) 100%); padding: 56px 24px 40px; text-align: center; border-top: 1px solid var(--line); }
+  .footer-inner p { margin-bottom: 10px; }
+  .footer-note { font-size: 0.82rem; color: var(--ink-soft); margin-top: 8px; }
+  .admin-link { display: inline-block; margin-top: 22px; font-size: 0.78rem; color: var(--ink-soft); text-decoration: underline; }
+
+  /* Confirmation overlay */
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(70,54,47,0.45); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 500; padding: 24px; }
+  .confirm-overlay.visible { opacity: 1; pointer-events: all; }
+  .confirm-box { background: var(--card); border-radius: var(--radius); padding: 38px; max-width: 420px; text-align: center; box-shadow: var(--shadow); }
+  .confirm-box h3 { font-style: italic; font-size: 1.4rem; margin-bottom: 12px; }
+  .confirm-box p { color: var(--ink-soft); margin-bottom: 22px; }
+
+  /* Admin */
+  .admin-section { background: #EADFD4; }
+  #adminLoginBox input { padding: 10px 14px; border-radius: 6px; border: 1px solid var(--line); margin-right: 8px; }
+  #adminLoginBox button { background: var(--rose); color: var(--card); padding: 10px 20px; border-radius: 999px; font-weight: 700; border: none; }
+  .error-text { color: #A13D3D; margin-top: 8px; font-size: 0.85rem; }
+  .admin-card { background: var(--card); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; border-left: 4px solid var(--rose); }
+  .admin-card.confirmed { border-left-color: var(--sage); }
+  .admin-card-head { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.82rem; font-weight: 700; }
+  .admin-date { color: var(--ink-soft); font-size: 0.8rem; margin-bottom: 8px; }
+  .admin-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .admin-actions button { background: transparent; border: 1px solid var(--rose); color: var(--rose-deep); padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 0.82rem; }
+  .editor-row { display: flex; align-items: center; gap: 18px; background: var(--card); padding: 13px 18px; border-radius: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .editor-name { font-weight: 700; flex: 1; min-width: 160px; font-size: 0.9rem; }
+  .editor-row label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; margin-bottom: 0; }
+  .editor-row input[type="number"] { width: 90px; padding: 6px 10px; margin-top: 0; }
+  .editor-row input[type="checkbox"] { width: auto; }
+  #adminMenuEditor { margin-bottom: 20px; }
+  h3.admin-heading { font-style: italic; margin-bottom: 16px; margin-top: 32px; font-size: 1.2rem; }
+  h3.admin-heading:first-child { margin-top: 0; }
+
+  @media (max-width: 760px) {
+    .nav-links { gap: 14px; }
+    .nav-links a, .nav-cart { font-size: 0.78rem; }
+    .logo { font-size: 1.25rem; }
+    .hero h1 { font-size: 2.4rem; }
+    section { padding: 60px 0; }
+    .order-layout { grid-template-columns: 1fr; gap: 24px; }
+    .order-summary-box { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;">
+  <symbol id="sprig" viewBox="0 0 120 160" fill="none">
+    <path d="M60,155 Q42,110 58,75 Q76,42 64,8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" pathLength="1" class="sprig-stem"/>
+    <path d="M58,120 Q40,108 30,115 Q42,128 58,120 Z" fill="currentColor" class="sprig-leaf" style="animation-delay:0.35s"/>
+    <path d="M60,95 Q80,85 90,92 Q78,104 60,95 Z" fill="currentColor" class="sprig-leaf" style="animation-delay:0.5s"/>
+    <path d="M62,65 Q44,55 34,62 Q46,74 62,65 Z" fill="currentColor" class="sprig-leaf" style="animation-delay:0.65s"/>
+    <path d="M63,35 Q82,27 92,34 Q80,45 63,35 Z" fill="currentColor" class="sprig-leaf" style="animation-delay:0.8s"/>
+    <circle cx="64" cy="10" r="4" fill="currentColor" class="sprig-bud" style="animation-delay:0.95s"/>
+  </symbol>
+</svg>
+
+<div class="announcement-bar">
+  <div class="container">
+    <p>I'm booked until <strong>December 14th</strong> — please reach out to discuss details and secure your booking for all dates following. Get in early to secure your spot!</p>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <span class="logo">The Little Cup Café</span>
+    <nav class="nav-links">
+      <a href="#menu">Menu</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#enquire">Custom Orders</a>
+      <a href="#about">About</a>
+      <button class="nav-cart" onclick="scrollToOrder()">Your order (<span id="navCartCount">0</span>)</button>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <svg class="deco-sprig top-left"><use href="#sprig"/></svg>
+  <svg class="deco-sprig bottom-right"><use href="#sprig"/></svg>
+  <div class="hero-inner">
+    <h1>The Little Cup Café</h1>
+    <p>Custom cakes, cupcakes, cheesecakes, tarts, and slab brownies &amp; blondies, baked to order — sweet and savoury catering and alcohol packages for your next event. <strong id="seasonalCallout"></strong></p>
+    <div class="hero-buttons">
+      <a href="#menu" class="btn-primary">See the menu</a>
+      <a href="#enquire" class="btn-secondary">Ask about a custom order</a>
+    </div>
+  </div>
+</div>
+
+<section id="menu">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Order online</p>
+      <h2>My Menu</h2>
+      <p id="menuIntroText">Tap + to add something to your order, then head down to checkout. Prices and availability change with the season.</p>
+    </div>
+    <div class="category-filters reveal">
+      <button class="cat-btn active" data-cat="Home" onclick="setFilter('Home')">Home</button>
+      <button class="cat-btn" data-cat="Brownies & Blondies" onclick="setFilter('Brownies & Blondies')">Brownies &amp; Blondies</button>
+      <button class="cat-btn" data-cat="Sweet Tray Bakes" onclick="setFilter('Sweet Tray Bakes')">Sweet Tray Bakes</button>
+      <button class="cat-btn" data-cat="Cookies" onclick="setFilter('Cookies')">Cookies</button>
+      <button class="cat-btn" data-cat="Tarts" onclick="setFilter('Tarts')">Tarts</button>
+      <button class="cat-btn" data-cat="Cupcakes" onclick="setFilter('Cupcakes')">Cupcakes</button>
+      <button class="cat-btn" data-cat="Custom Cakes" onclick="setFilter('Custom Cakes')">Custom Cakes</button>
+      <button class="cat-btn" data-cat="Cheesecakes" onclick="setFilter('Cheesecakes')">Cheesecakes</button>
+      <button class="cat-btn" data-cat="Gluten Friendly" onclick="setFilter('Gluten Friendly')">Gluten Friendly</button>
+      <button class="cat-btn" data-cat="Vegan Bakes" onclick="setFilter('Vegan Bakes')">Vegan Bakes</button>
+      <button class="cat-btn" data-cat="Dessert Cups" onclick="setFilter('Dessert Cups')">Dessert Cups</button>
+      <button class="cat-btn" data-cat="Savoury Catering" onclick="setFilter('Savoury Catering')">Savoury Catering</button>
+    </div>
+    <div class="menu-grid reveal" id="menuGrid"></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">A peek behind the scenes</p>
+      <h2>Gallery</h2>
+      <p>A few favourites from recent orders and events.</p>
+    </div>
+    <div class="gallery-grid reveal" id="galleryGrid"></div>
+  </div>
+</section>
+
+<section id="order" style="background:#EFE3D8;">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Step two</p>
+      <h2>Complete Your Order</h2>
+      <p>I'll text to confirm — bookings finalised once deposit is paid.</p>
+    </div>
+    <div class="order-layout reveal">
+      <div class="order-summary-box">
+        <h3>Your order</h3>
+        <div id="orderSummaryList"><p class="empty-note">Nothing added yet — pick something from the menu above.</p></div>
+      </div>
+      <form id="orderForm" onsubmit="submitOrder(event)">
+        <label>Name*<input type="text" name="name" required></label>
+        <label>Phone number*<input type="tel" name="phone" required></label>
+        <label>Email<input type="email" name="email"></label>
+        <label>Event date*<input type="date" name="neededBy" required></label>
+        <label>Pickup/delivery
+          <select name="fulfillment">
+            <option value="Pickup">Pickup</option>
+            <option value="Delivery">Delivery</option>
+          </select>
+        </label>
+        <label>Allergens or preferences<textarea name="notes" rows="3"></textarea></label>
+        <label>Birthday topper or candles required? Colour theme or preference?<textarea name="birthdayDetails" rows="2"></textarea></label>
+        <button type="submit" class="btn-primary">Send order</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="enquire">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Custom work</p>
+      <h2>Custom Orders &amp; Enquiries</h2>
+      <p>Planning a wedding, birthday, or big event — or need catering? Tell me what you have in mind.</p>
+    </div>
+    <form id="enquiryForm" class="enquiry-form reveal" onsubmit="submitEnquiry(event)">
+      <label>Full name*<input type="text" name="name" required></label>
+      <label>Phone number*<input type="tel" name="phone" required></label>
+      <label>Email<input type="email" name="email"></label>
+      <label>Event date<input type="date" name="eventDate"></label>
+      <label>Tell me about your order*<textarea name="message" rows="4" required placeholder="Occasion, guest count, flavours, colours, budget — whatever you've got so far."></textarea></label>
+      <button type="submit" class="btn-primary">Send enquiry</button>
+    </form>
+  </div>
+</section>
+
+<section id="about" class="about-section" style="background:#EFE3D8;">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">About</p>
+      <h2>The Little Cup Café</h2>
+    </div>
+    <p class="reveal">I purchased my first restaurant in 2019, building a strong base heading into COVID. After the restaurant closed, I restructured — opening a drive-thru coffee service through Wagga Cellars — which let me keep my business going and expand my skills behind the scenes.</p>
+    <p class="reveal">2024 saw the arrival of my son, and a need to reconsider my priorities — which led me into the catering business I now offer.</p>
+    <p class="reveal">When you purchase from and support my business, you're also supporting my family. Every cake, every batch, every "yes" from a customer is time I get to spend watching my son grow, not missing it. Big or small, thank you for being part of that with me.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <p class="logo" style="font-size:1.4rem;">The Little Cup Café</p>
+    <p>
+      <a href="https://instagram.com/thelittlecupcafe" target="_blank" rel="noopener">Instagram</a>
+      ·
+      <a href="https://facebook.com/thelittlecupcafe" target="_blank" rel="noopener">Facebook</a>
+      — @thelittlecupcafe
+    </p>
+    <p>Stacey — <a href="tel:0477436364">0477 436 364</a></p>
+    <p><a href="mailto:thelittlecupcafe@gmail.com">thelittlecupcafe@gmail.com</a></p>
+    <p class="footer-note">Emails sometimes land in spam — if you haven't heard back within 48 hours, please reach out by text or social media instead.</p>
+    <p>Wagga Cellars, 407 Lake Albert Road, Kooringal</p>
+    <p class="footer-note">Prices shown are current but may change with seasonal availability.</p>
+    <a href="#admin" class="admin-link" onclick="toggleAdminLogin(event)">Business owner login</a>
+  </div>
+</footer>
+
+<section id="admin" class="admin-section">
+  <div class="container">
+    <div id="adminLoginBox" style="display:none;">
+      <h3 style="font-style:italic; margin-bottom:14px;">Business owner login</h3>
+      <input type="password" id="adminPasscodeInput" placeholder="Enter passcode">
+      <button onclick="checkAdminLogin()">Log in</button>
+      <p id="adminError" class="error-text"></p>
+    </div>
+    <div id="adminDashboard" style="display:none;">
+      <h3 class="admin-heading">Orders &amp; enquiries</h3>
+      <div id="adminOrdersList"></div>
+      <h3 class="admin-heading">Gallery photos</h3>
+      <div id="adminGalleryUpload">
+        <label>Upload <input type="file" accept="image/*" id="galleryFileInput"></label>
+        <span>or</span>
+        <input type="text" id="galleryUrlInput" placeholder="paste an image URL">
+        <input type="text" id="galleryCaptionInput" placeholder="caption (optional)">
+        <button onclick="addGalleryPhoto()" class="btn-secondary">Add photo</button>
+      </div>
+      <div id="adminGalleryList"></div>
+      <h3 class="admin-heading">Tart pricing (applies to all tart flavours)</h3>
+      <div id="adminTartPricing"></div>
+      <h3 class="admin-heading">Cupcake pricing (starting price — seasonal upcharges confirmed manually)</h3>
+      <div id="adminCupcakePricing"></div>
+      <h3 class="admin-heading">Gluten-friendly cupcake pricing</h3>
+      <div id="adminGfCupcakePricing"></div>
+      <h3 class="admin-heading">Brownie, blondie &amp; tray bake sizing (medium/mini upcharge on top of the 14-piece price)</h3>
+      <div id="adminSlabUpcharge"></div>
+      <h3 class="admin-heading">Edit menu prices, serving text, photos &amp; availability</h3>
+      <div id="adminMenuEditor"></div>
+      <button onclick="saveMenuChanges()" class="btn-primary">Save menu changes</button>
+    </div>
+  </div>
+</section>
+
+<div id="confirmOverlay" class="confirm-overlay">
+  <div class="confirm-box">
+    <h3>Got it, thank you</h3>
+    <p id="confirmMessage"></p>
+    <button onclick="closeConfirmation()" class="btn-primary">Close</button>
+  </div>
+</div>
+
+<div class="cart-bar" id="cartBar">
+  <span><span id="cartCount">0</span> item(s) — <span id="cartBarTotal">$0.00</span></span>
+  <button onclick="scrollToOrder()">View order →</button>
+</div>
+
+<script>
+  // ---------- EDIT YOUR MENU HERE ----------
+  // Simple items use "price". Brownies/blondies use "slabPrice" (whole slab) and
+  // "piecePrice" (per single piece) — leave piecePrice out if you don't sell that one by the piece yet.
+  // "seasonal: true" adds an "In season" tag. "enquireOnly: true" swaps the stepper for an "Enquire" button.
+  // "note" adds a small italic line under the name (allergen info, etc).
+  const MENU_ITEMS = [
+    // ---- Home (highlight items that don't belong in any other category) ----
+    { id: 'hometab-high-tea', category: 'Home', name: 'High Tea', description: 'A range of sweet and savoury items to fill your own tiered stand', price: 40, perPerson: true, minQuantity: 2, note: 'Minimum order of 2 people', photo: 'https://i.ibb.co/gZh42TD0/513-CF7-F8-5-D01-4-FBC-B45-E-D76-CCECD4881.png' },
+    { id: 'hometab-mini-eclairs', category: 'Home', name: 'Mini Eclairs', description: 'Filled with fresh cream and a chocolate drizzle. Box of 12.', price: 20, photo: 'https://i.ibb.co/93TxrZyG/AD577-F26-813-A-431-F-9-DF6-B7418-C5-DCE6-B.png' },
+    { id: 'hometab-treat-box', category: 'Home', name: 'Treat Box', description: 'A mixed treat box for 2 people, filled with a range of samples that change weekly — my own selection', price: 70, photo: 'https://i.ibb.co/bq9jVBw/BD223999-11-D1-4725-9-D8-A-62-BE1-A9432-C4.png' },
+    { id: 'hometab-mixed-cupcake-box', category: 'Home', name: 'Mixed Box of 6 Cupcakes', isCupcake: true, hideMiniOption: true, photo: 'https://i.ibb.co/9kfZPBDw/2-FE5-ED95-BCBA-495-C-9174-8-D5495-CB0-EE1.png', note: "Flavours change regularly, contact me for current offers" },
+
+    // ---- Custom Cakes ----
+    { id: 'cake-4inch', category: 'Custom Cakes', name: '4" Round Cake', description: 'Choose your flavour and finish — see the flavour list below', price: 80, startingPrice: true, photo: 'https://i.ibb.co/SDrdgFYc/FD506545-9360-4-B4-B-A609-44-E347573-C9-C.png' },
+    { id: 'cake-8inch', category: 'Custom Cakes', name: '8" Round Cake', description: 'Choose your flavour and finish — see the flavour list below', price: 120, startingPrice: true, photo: 'https://i.ibb.co/5xR8J3pc/BE7-F0-CCF-3-E02-45-B2-8362-1-BA7-C3710-E86.png' },
+    { id: 'cake-tiered', category: 'Custom Cakes', name: 'Custom Tiered Cake', description: 'For weddings and big celebrations — priced on request', price: 250, enquireOnly: true },
+    { id: 'cake-flavour-list', category: 'Custom Cakes', name: 'Available Flavours', description: 'Let me know your pick when you order.', isInfoCard: true, flavourList: [
+      'White Chocolate Mud Cake', 'Milk Chocolate Mud Cake', 'Caramel Mud Cake', 'Dark Chocolate Mud Cake', 'Vanilla Sponge', 'Apple and Cinnamon', 'Strawberry Sponge', 'Chocolate',
+      'Brown Sugar Sponge', 'Biscoff', 'Nutella', 'Marble', 'Coffee and Walnut', 'Lemon Drizzle', 'Red Velvet', 'Baileys (contains alcohol)',
+      'Caramel Ginger', 'Banana', 'Passionfruit Martini (contains alcohol)', 'Millionaires (chocolate, caramel, shortbread)', 'Ferrero Rocher',
+      'Chocolate Cheesecake', 'Chocolate Guinness (contains alcohol)', 'Chocolate Chip', 'Hot Chocolate', 'Chocolate Peppermint', 'Raspberry Ripple',
+      'White Chocolate', 'Chocolate Fudge', 'Cookies and Cream', 'Carrot Cake', 'Lemon and Raspberry', 'Black Forest (contains alcohol)', 'Apple Crumble',
+      'White Chocolate Raspberry', 'Gin and Tonic or Gin and Lemonade (contains alcohol)', 'Funfetti', 'Malteser', 'Triple Chocolate', 'Lemon and Blueberry',
+      'Kinder Bueno', 'Apple and Blackberry Crumble', 'Summer Berries', 'Crunchie', 'Lemon and Elderflower', 'Caramilk', 'Custard Cream', 'Coffee',
+      'Pistachio White Chocolate', 'Lemon and Poppy Seed', 'Limoncello (contains alcohol)', 'Pink Gin and Lemonade (contains alcohol)', 'Pink Gin and Tonic (contains alcohol)'
+    ] },
+
+    // ---- Brownies & Blondies (sold as a whole slab, or by the piece where noted) ----
+    { id: 'bb-triple-choc-brownie', category: 'Brownies & Blondies', name: 'Triple Chocolate Brownie', slabPrice: 90, hidePieceOption: true, photo: 'https://i.ibb.co/Dg6jzq5H/21-B9-CCA6-6618-4452-AC1-D-1-D93-CDA2892-B.png' },
+    { id: 'bb-lemon-blueberry-blondie', category: 'Brownies & Blondies', name: 'Lemon Blueberry Blondie', slabPrice: 85, hidePieceOption: true, photo: 'https://i.ibb.co/0jgrgw00/7-C746677-CADC-4-A49-91-A3-B01-DA8-EDB1-B1.png' },
+    { id: 'bb-white-choc-blondie', category: 'Brownies & Blondies', name: 'White Chocolate Blondie', slabPrice: 85, hidePieceOption: true, photo: 'https://i.ibb.co/B2w58Q6q/F1033-EA3-8-CF1-4-EDD-9-FE1-D09-C5-E49133-F.png' },
+    { id: 'bb-custard-cream-blondie', category: 'Brownies & Blondies', name: 'Custard Cream Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-jammy-dodger-blondie', category: 'Brownies & Blondies', name: 'Jammy Dodger Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-bakewell-blondie', category: 'Brownies & Blondies', name: 'Bakewell Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-tiramisu-brownie', category: 'Brownies & Blondies', name: 'Tiramisu Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-pecan-pie-brownie', category: 'Brownies & Blondies', name: 'Pecan Pie Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-pistachio-brownie', category: 'Brownies & Blondies', name: 'Pistachio Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-mandm-brownie', category: 'Brownies & Blondies', name: 'M&M Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-peanut-butter-brownie', category: 'Brownies & Blondies', name: 'Peanut Butter Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-oreo-cheesecake-brownie', category: 'Brownies & Blondies', name: 'Oreo Cheesecake Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-cookie-dough-brownie', category: 'Brownies & Blondies', name: 'Cookie Dough Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-kitkat-brownie', category: 'Brownies & Blondies', name: 'KitKat Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-rolo-brownie', category: 'Brownies & Blondies', name: 'Rolo Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-rolo-blondie', category: 'Brownies & Blondies', name: 'Rolo Blondie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-honeycomb-brownie', category: 'Brownies & Blondies', name: 'Honeycomb Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-gingerbread-brownie', category: 'Brownies & Blondies', name: 'Gingerbread Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-gingerbread-blondie', category: 'Brownies & Blondies', name: 'Gingerbread Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-red-velvet-cheesecake-brownie', category: 'Brownies & Blondies', name: 'Red Velvet Cheesecake Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-raspberry-brownie', category: 'Brownies & Blondies', name: 'Raspberry Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-marsbar-brownie', category: 'Brownies & Blondies', name: 'Mars Bar Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-kinder-bueno-brownie', category: 'Brownies & Blondies', name: 'Kinder Bueno Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-kinder-bueno-blondie', category: 'Brownies & Blondies', name: 'Kinder Bueno Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-malteser-brownie', category: 'Brownies & Blondies', name: 'Malteser Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-black-forest-brownie', category: 'Brownies & Blondies', name: 'Black Forest Brownie', slabPrice: 85, hidePieceOption: true, photo: 'https://i.ibb.co/G3VMJjnn/CFA81-C05-56-C0-45-ED-83-A8-C12-D1-BD2-CF1-B.png' },
+    { id: 'bb-toblerone-brownie', category: 'Brownies & Blondies', name: 'Toblerone Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-baileys-brownie', category: 'Brownies & Blondies', name: 'Baileys Brownie', slabPrice: 85, note: 'Contains alcohol', hidePieceOption: true },
+    { id: 'bb-nutella-brownie', category: 'Brownies & Blondies', name: 'Nutella Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-biscoff-brownie', category: 'Brownies & Blondies', name: 'Biscoff Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-biscoff-blondie', category: 'Brownies & Blondies', name: 'Biscoff Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-coconut-brownie', category: 'Brownies & Blondies', name: 'Coconut Brownie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-cheesecake-brownie', category: 'Brownies & Blondies', name: 'Cheesecake Brownie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-choc-hazelnut-cheesecake-brownie', category: 'Brownies & Blondies', name: 'Chocolate Hazelnut Cheesecake Brownie', slabPrice: 100, hidePieceOption: true },
+    { id: 'bb-white-choc-caramel-blondie', category: 'Brownies & Blondies', name: 'White Chocolate Caramel Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-white-choc-raspberry-blondie', category: 'Brownies & Blondies', name: 'White Chocolate & Raspberry Blondie', slabPrice: 85, hidePieceOption: true },
+    { id: 'bb-white-choc-pistachio-blondie', category: 'Brownies & Blondies', name: 'White Chocolate Pistachio Blondie', slabPrice: 90, hidePieceOption: true },
+    { id: 'bb-coconut-choc-chip-blondie', category: 'Brownies & Blondies', name: 'Coconut Chocolate Chip Blondie', slabPrice: 85, hidePieceOption: true },
+
+    // ---- Cookies (sold as a batch — see CATEGORY_NOTES above for sizing) ----
+    { id: 'cookie-choc-chip-smarties', category: 'Cookies', name: 'Chocolate Chip with Smarties', price: 65, photo: 'https://i.ibb.co/Kj6rVyhS/IMG-7788.png' },
+    { id: 'cookie-filled-jam', category: 'Cookies', name: 'Filled Cookie — Jam (Any Flavour)', price: 60 },
+    { id: 'cookie-filled-nutella', category: 'Cookies', name: 'Filled Cookie — Nutella', price: 60 },
+    { id: 'cookie-filled-pistachio', category: 'Cookies', name: 'Filled Cookie — Pistachio', price: 60 },
+    { id: 'cookie-filled-lemon-curd', category: 'Cookies', name: 'Filled Cookie — Lemon Curd', price: 60 },
+    { id: 'cookie-filled-biscoff', category: 'Cookies', name: 'Filled Cookie — Biscoff', price: 60 },
+    { id: 'cookie-easter-egg-filled', category: 'Cookies', name: 'Easter Egg Filled', enquireOnly: true, note: 'Only available around Easter — enquire for details.' },
+    { id: 'cookie-gingerbread-cheesecake', category: 'Cookies', name: 'Gingerbread Cheesecake', price: 70 },
+    { id: 'cookie-gingerbread', category: 'Cookies', name: 'Gingerbread', price: 60 },
+    { id: 'cookie-lemon-poppyseed', category: 'Cookies', name: 'Lemon Poppyseed', price: 60, photo: 'https://i.ibb.co/dJcD105y/0598-BB6-F-4429-4-A0-E-8-D77-8431-BB29-C3-C4.png' },
+    { id: 'cookie-pistachio', category: 'Cookies', name: 'Pistachio', price: 70, photo: 'https://i.ibb.co/TD2GK0qk/5-AB384-CE-E3-ED-4661-A8-E0-CA1-DD851-E1-C2.png' },
+    { id: 'cookie-white-choc-pistachio', category: 'Cookies', name: 'White Chocolate and Pistachio', price: 75 },
+    { id: 'cookie-lemon-crinkle', category: 'Cookies', name: 'Lemon Crinkle', price: 60, photo: 'https://i.ibb.co/ds1qt7Br/A040-B753-B9-B9-49-AC-B1-F9-EFAB71-F30-EA2.png' },
+    { id: 'cookie-black-forest', category: 'Cookies', name: 'Black Forest', price: 60 },
+    { id: 'cookie-white-choc-fudge', category: 'Cookies', name: 'White Chocolate Fudge', price: 60 },
+    { id: 'cookie-raspberry-cheesecake', category: 'Cookies', name: 'Raspberry Cheesecake', price: 70 },
+    { id: 'cookie-glazed-lemon', category: 'Cookies', name: 'Glazed Lemon', price: 60 },
+    { id: 'cookie-salted-caramel-cheesecake', category: 'Cookies', name: 'Salted Caramel Cheesecake', price: 70 },
+    { id: 'cookie-toblerone', category: 'Cookies', name: 'Toblerone', price: 65 },
+    { id: 'cookie-peanut-butter', category: 'Cookies', name: 'Peanut Butter', price: 60 },
+    { id: 'cookie-white-choc-macadamia', category: 'Cookies', name: 'White Chocolate Macadamia', price: 60 },
+    { id: 'cookie-mint-aero', category: 'Cookies', name: 'Mint Aero', price: 65 },
+    { id: 'cookie-bakewell', category: 'Cookies', name: 'Bakewell', price: 60 },
+    { id: 'cookie-oreo', category: 'Cookies', name: 'Oreo', price: 60 },
+    { id: 'cookie-biscoff', category: 'Cookies', name: 'Biscoff', price: 60 },
+    { id: 'cookie-brownie', category: 'Cookies', name: 'Brownie', price: 65 },
+    { id: 'cookie-kinder-bueno', category: 'Cookies', name: 'Kinder Bueno', price: 70 },
+    { id: 'cookie-red-velvet', category: 'Cookies', name: 'Red Velvet', price: 60 },
+    { id: 'cookie-triple-chocolate', category: 'Cookies', name: 'Triple Chocolate', price: 60 },
+    { id: 'cookie-chocolate-chip', category: 'Cookies', name: 'Chocolate Chip', price: 60, photo: 'https://i.ibb.co/WvmFpvJW/EC0-E9-CC1-FA97-49-A7-BD6-E-08-BE16-EC2920.png' },
+    { id: 'cookie-funfetti', category: 'Cookies', name: 'Funfetti', price: 60 },
+    { id: 'cookie-nutella', category: 'Cookies', name: 'Nutella', price: 60 },
+    { id: 'cookie-galaxy', category: 'Cookies', name: 'Galaxy', enquireOnly: true, note: 'Only available when stocked in local stores — enquire for current availability.' },
+    { id: 'cookie-malteser', category: 'Cookies', name: 'Malteser', price: 65 },
+    { id: 'cookie-rolo', category: 'Cookies', name: 'Rolo', price: 65 },
+    { id: 'cookie-neapolitan', category: 'Cookies', name: 'Neapolitan', price: 60 },
+    { id: 'cookie-mandm', category: 'Cookies', name: 'M&M', price: 65 },
+    { id: 'cookie-mint-choc-chip', category: 'Cookies', name: 'Mint Chocolate Chip', price: 60 },
+    { id: 'cookie-melting-moments-choc-caramel', category: 'Cookies', name: 'Melting Moments — Chocolate and Caramel', price: 70, photo: 'https://i.ibb.co/cXptVDry/6151-E307-6-DD5-43-F7-B99-B-40-FB7-ADBDD68.png' },
+    { id: 'cookie-melting-moments-marble', category: 'Cookies', name: 'Melting Moments — Marble', price: 70 },
+    { id: 'cookie-melting-moments-vanilla', category: 'Cookies', name: 'Melting Moments — Vanilla', price: 70, photo: 'https://i.ibb.co/VcSKgCpn/03-F17859-B09-E-43-C6-8907-AA60069-BA493.png' },
+    { id: 'cookie-melting-moments-lemon', category: 'Cookies', name: 'Melting Moments — Lemon', price: 70, photo: 'https://i.ibb.co/bgwZvzm4/6-C3124-DC-975-C-45-B5-8-F9-A-720257687-D2-E.png' },
+    { id: 'cookie-melting-moments-passionfruit', category: 'Cookies', name: 'Melting Moments — Passionfruit', price: 70 },
+    { id: 'cookie-melting-moments-chocolate', category: 'Cookies', name: 'Melting Moments — Chocolate', price: 70 },
+    { id: 'cookie-melting-moments-baileys', category: 'Cookies', name: 'Melting Moments — Chocolate and Baileys', price: 70, note: 'Contains alcohol' },
+
+    // ---- Tarts (sold as 6 large / 12 small, or a deep/shallow base tart — pricing shared across all flavours, see TART_PRICING_DEFAULT above) ----
+    { id: 'tart-vanilla-custard-nutmeg', category: 'Tarts', name: 'Vanilla Custard with Nutmeg', isTart: true, photo: 'https://i.ibb.co/mWt4r84/DD743-E54-14-D9-4-FED-B283-DEE2-F1-FAC83-B.png' },
+    { id: 'tart-baked-portuguese-custard', category: 'Tarts', name: 'Baked Portuguese Custard', isTart: true },
+    { id: 'tart-nutella', category: 'Tarts', name: 'Nutella', isTart: true, photo: 'https://i.ibb.co/hJG7Wt4W/A52-FCE4-E-22-E6-4944-A6-B5-514-E7680571-A.png' },
+    { id: 'tart-mascarpone-seasonal-fruit', category: 'Tarts', name: 'Mascarpone Cream with Seasonal Fruit', isTart: true, seasonal: true, photo: 'https://i.ibb.co/rGK2WJcs/87-DC6401-5247-47-C2-B13-C-A3926242-D46-A.png' },
+    { id: 'tart-mascarpone-strawberries', category: 'Tarts', name: 'Mascarpone Cream with Strawberries', isTart: true, photo: 'https://i.ibb.co/wZ2mMj28/2427-BF58-2-E26-4047-AD0-D-F6-D3-CE40-D5-F6.png' },
+    { id: 'tart-biscoff', category: 'Tarts', name: 'Biscoff', isTart: true },
+    { id: 'tart-pistachio', category: 'Tarts', name: 'Pistachio', isTart: true },
+    { id: 'tart-lemon-blueberry', category: 'Tarts', name: 'Lemon Blueberry', isTart: true, photo: 'https://i.ibb.co/Kc5xd0SR/8-ABF8136-790-B-4515-8-F49-F660015-B51-D1.png' },
+    { id: 'tart-lemon', category: 'Tarts', name: 'Lemon', isTart: true },
+    { id: 'tart-chocolate', category: 'Tarts', name: 'Chocolate', isTart: true, photo: 'https://i.ibb.co/jv7SSLkG/80651-C20-BB5-C-4619-8423-A759-DE8-D81-AD.png' },
+    { id: 'tart-lemon-lime', category: 'Tarts', name: 'Lemon Lime', isTart: true },
+    { id: 'tart-lemon-raspberry', category: 'Tarts', name: 'Lemon Raspberry', isTart: true, photo: 'https://i.ibb.co/SXL0BYhn/6-D53705-C-B13-E-4414-89-E5-C4992-C2-BFB6-E.png' },
+    { id: 'tart-white-chocolate', category: 'Tarts', name: 'White Chocolate', isTart: true },
+    { id: 'tart-white-chocolate-raspberry', category: 'Tarts', name: 'White Chocolate Raspberry', isTart: true },
+    { id: 'tart-salted-caramel', category: 'Tarts', name: 'Salted Caramel', isTart: true },
+    { id: 'tart-vanilla-bean', category: 'Tarts', name: 'Vanilla Bean', isTart: true, photo: 'https://i.ibb.co/5hMLB24B/DC65-D541-1724-4-E65-9731-66-E98-B5327-FB.png' },
+    { id: 'tart-caramel-custard', category: 'Tarts', name: 'Caramel Custard', isTart: true },
+    { id: 'tart-caramel-custard-chocolate-drizzle', category: 'Tarts', name: 'Caramel Custard with Chocolate Drizzle', isTart: true, photo: 'https://i.ibb.co/NgbZyt21/3232-E3-C3-70-E1-4-A63-90-E1-E700-EB997-A27.png' },
+    { id: 'tart-caramel-ganache-fresh-cream', category: 'Tarts', name: 'Caramel Ganache with Fresh Caramel Cream', isTart: true, photo: 'https://i.ibb.co/xSCFLNgH/C7-BE8-E0-E-7-ED8-4522-A40-D-878-DD35-CAB69.png' },
+    { id: 'tart-tiramisu', category: 'Tarts', name: 'Tiramisu', isTart: true, photo: 'https://i.ibb.co/27ScxLF8/27-A4-A63-A-846-A-486-C-820-F-D2-D3219-F396-F.png' },
+    { id: 'tart-butterscotch', category: 'Tarts', name: 'Butterscotch', isTart: true },
+    { id: 'tart-chocolate-gingerbread', category: 'Tarts', name: 'Chocolate Gingerbread', isTart: true },
+    { id: 'tart-kinder-bueno', category: 'Tarts', name: 'Kinder Bueno', isTart: true },
+    { id: 'tart-chocolate-peppermint', category: 'Tarts', name: 'Chocolate Peppermint', isTart: true },
+    { id: 'tart-toblerone', category: 'Tarts', name: 'Toblerone', isTart: true },
+    { id: 'tart-millionaires', category: 'Tarts', name: 'Millionaires (Chocolate, Caramel, Shortbread)', isTart: true },
+    { id: 'tart-white-chocolate-strawberry', category: 'Tarts', name: 'White Chocolate Strawberry', isTart: true },
+    { id: 'tart-rolo', category: 'Tarts', name: 'Rolo', isTart: true },
+    { id: 'tart-oreo', category: 'Tarts', name: 'Oreo', isTart: true },
+    { id: 'tart-strawberry-hazelnut-chocolate', category: 'Tarts', name: 'Strawberry Hazelnut Chocolate', isTart: true },
+    { id: 'tart-ferrero-rocher-hazelnut', category: 'Tarts', name: 'Ferrero Rocher and Hazelnut', isTart: true },
+
+    // ---- Cupcakes (sold as a box of 6 — shared starting price, see CUPCAKE_PRICING_DEFAULT above) ----
+    { id: 'cupcake-mixed-box', category: 'Cupcakes', name: 'Mixed Box of 6 Cupcakes', isCupcake: true, hideMiniOption: true, photo: 'https://i.ibb.co/9kfZPBDw/2-FE5-ED95-BCBA-495-C-9174-8-D5495-CB0-EE1.png', note: "Flavours change regularly, contact me for current offers" },
+    { id: 'cupcake-chocolate', category: 'Cupcakes', name: 'Chocolate', isCupcake: true },
+    { id: 'cupcake-hot-chocolate', category: 'Cupcakes', name: 'Hot Chocolate', isCupcake: true },
+    { id: 'cupcake-passionfruit-martini', category: 'Cupcakes', name: 'Passionfruit Martini', isCupcake: true, note: 'Contains alcohol', photo: 'https://i.ibb.co/RkYvbgJM/F2-C323-CB-E694-43-F7-B515-F1-CAE7-DEC090.png' },
+    { id: 'cupcake-jaffa-cake', category: 'Cupcakes', name: 'Jaffa Cake', isCupcake: true },
+    { id: 'cupcake-lemon-blueberry', category: 'Cupcakes', name: 'Lemon and Blueberry', isCupcake: true },
+    { id: 'cupcake-biscoff', category: 'Cupcakes', name: 'Biscoff', isCupcake: true, photo: 'https://i.ibb.co/cHpXJzK/25-E79-DDD-7230-4110-9-B5-F-C1198-AA54078.png' },
+    { id: 'cupcake-white-choc-raspberry', category: 'Cupcakes', name: 'White Chocolate Raspberry', isCupcake: true, photo: 'https://i.ibb.co/q3gxVbCn/FA47-A1-A0-1-F2-B-4-DAC-9728-DAF8-D004070-E.png' },
+    { id: 'cupcake-prosecco', category: 'Cupcakes', name: 'Prosecco', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-toblerone', category: 'Cupcakes', name: 'Toblerone', isCupcake: true },
+    { id: 'cupcake-chocolate-fudge', category: 'Cupcakes', name: 'Chocolate Fudge', isCupcake: true, photo: 'https://i.ibb.co/wNCtCzDB/94-DDEFC6-2711-4-FEC-8-A0-D-8-AFE22380395.png' },
+    { id: 'cupcake-lemon-drizzle', category: 'Cupcakes', name: 'Lemon Drizzle', isCupcake: true, photo: 'https://i.ibb.co/G4zNsGyb/DB0-A13-D0-7-B2-F-4-A77-9-E12-8474-A1336363.png' },
+    { id: 'cupcake-salted-caramel', category: 'Cupcakes', name: 'Salted Caramel', isCupcake: true },
+    { id: 'cupcake-pimms', category: 'Cupcakes', name: "Pimm's", isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-caramel', category: 'Cupcakes', name: 'Caramel', isCupcake: true },
+    { id: 'cupcake-apple-crumble', category: 'Cupcakes', name: 'Apple Crumble', isCupcake: true, photo: 'https://i.ibb.co/HpxQpmVs/4367-D64-D-3-C0-F-4-F61-AF57-D8-D37-DA5-F1-C0.png' },
+    { id: 'cupcake-lemon-raspberry', category: 'Cupcakes', name: 'Lemon and Raspberry', isCupcake: true, photo: 'https://i.ibb.co/8gTFpWZ0/4937-D926-32-ED-43-C7-9260-D85-F7076-F4-DF.png' },
+    { id: 'cupcake-gin-tonic', category: 'Cupcakes', name: 'Gin and Tonic', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-gin-lemonade', category: 'Cupcakes', name: 'Gin and Lemonade', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-chai-latte', category: 'Cupcakes', name: 'Chai Latte', isCupcake: true },
+    { id: 'cupcake-white-chocolate', category: 'Cupcakes', name: 'White Chocolate', isCupcake: true },
+    { id: 'cupcake-marble', category: 'Cupcakes', name: 'Marble', isCupcake: true, photo: 'https://i.ibb.co/Q3Q9tBM7/IMG-7787.png' },
+    { id: 'cupcake-malteser', category: 'Cupcakes', name: 'Malteser', isCupcake: true },
+    { id: 'cupcake-honeycomb', category: 'Cupcakes', name: 'Honeycomb', isCupcake: true, photo: 'https://i.ibb.co/zVtcmzVp/0-B6-FA072-E55-A-4-E06-820-C-4037-CFB5-B5-AC.png' },
+    { id: 'cupcake-coffee-walnut', category: 'Cupcakes', name: 'Coffee and Walnut', isCupcake: true },
+    { id: 'cupcake-lemon-poppyseed', category: 'Cupcakes', name: 'Lemon and Poppyseed', isCupcake: true },
+    { id: 'cupcake-triple-chocolate', category: 'Cupcakes', name: 'Triple Chocolate', isCupcake: true },
+    { id: 'cupcake-caramilk', category: 'Cupcakes', name: 'Caramilk', isCupcake: true },
+    { id: 'cupcake-baileys', category: 'Cupcakes', name: 'Baileys', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-funfetti', category: 'Cupcakes', name: 'Funfetti', isCupcake: true },
+    { id: 'cupcake-red-velvet', category: 'Cupcakes', name: 'Red Velvet', isCupcake: true },
+    { id: 'cupcake-nutella', category: 'Cupcakes', name: 'Nutella', isCupcake: true, photo: 'https://i.ibb.co/RG5ntnL3/AE4-D44-C8-6597-449-F-9-B58-EB5430465-BE5.png' },
+    { id: 'cupcake-vanilla', category: 'Cupcakes', name: 'Vanilla', isCupcake: true, photo: 'https://i.ibb.co/VYxPwv5m/3-A086893-A361-4-C3-A-BD3-F-316296-B30577.png' },
+    { id: 'cupcake-custard-cream', category: 'Cupcakes', name: 'Custard Cream', isCupcake: true },
+    { id: 'cupcake-mint-chocolate', category: 'Cupcakes', name: 'Mint Chocolate', isCupcake: true },
+    { id: 'cupcake-millionaires', category: 'Cupcakes', name: 'Millionaires (Caramel, Chocolate, Shortbread)', isCupcake: true },
+    { id: 'cupcake-oreo', category: 'Cupcakes', name: 'Oreo', isCupcake: true },
+    { id: 'cupcake-berry-pistachio', category: 'Cupcakes', name: 'Berry and Pistachio', isCupcake: true },
+    { id: 'cupcake-carrot-cake', category: 'Cupcakes', name: 'Carrot Cake', isCupcake: true, photo: 'https://i.ibb.co/FLWMhNKM/3-D796338-6-E9-C-47-C1-8760-DD88-D091-A431.png' },
+    { id: 'cupcake-milk-chocolate', category: 'Cupcakes', name: 'Milk Chocolate', isCupcake: true, photo: 'https://i.ibb.co/0pFxXdXN/46-CC5-AEA-1390-44-E3-A53-C-68-AC48-B427-B7.png' },
+    { id: 'cupcake-limoncello', category: 'Cupcakes', name: 'Limoncello', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-turkish-delight', category: 'Cupcakes', name: 'Turkish Delight', isCupcake: true },
+    { id: 'cupcake-pink-gin-lemonade', category: 'Cupcakes', name: 'Pink Gin and Lemonade', isCupcake: true, note: 'Contains alcohol', photo: 'https://i.ibb.co/DDtz1y6d/E513-FA20-565-D-4-EBC-9-E61-2-EBE0-F43160-B.png' },
+    { id: 'cupcake-pink-gin-tonic', category: 'Cupcakes', name: 'Pink Gin and Tonic', isCupcake: true, note: 'Contains alcohol' },
+    { id: 'cupcake-mint-mojito', category: 'Cupcakes', name: 'Mint Mojito', isCupcake: true, note: 'Contains alcohol', photo: 'https://i.ibb.co/0RLFKJRt/FFE818-C4-AD64-42-F6-891-F-F853-B9-C03213.png' },
+
+    // ---- Cheesecakes (sized like custom cakes; gluten-friendly; kitchen is not 100% gluten-free — see CATEGORY_NOTES above) ----
+    { id: 'cheesecake-10inch-shallow', category: 'Cheesecakes', name: '10" Cheesecake (Shallow)', price: 90, startingPrice: true },
+    { id: 'cheesecake-7inch-deep', category: 'Cheesecakes', name: '7" Cheesecake (Deep)', price: 100, startingPrice: true, photo: 'https://i.ibb.co/r2sZ9kM9/7-AC0-A4-D1-D42-E-4-EA9-970-F-4583181546-B6.png' },
+    { id: 'cheesecake-treat-box', category: 'Cheesecakes', name: 'Treat Box', description: '2x 4" cheesecakes, 2x ice-cream-style chocolate-covered cheesecake, 4x mini cheesecakes', price: 110, startingPrice: true },
+    { id: 'cheesecake-flavour-list', category: 'Cheesecakes', name: 'Available Flavours', description: 'Let me know your pick when you order.', isInfoCard: true, flavourList: [
+      'Tiramisu', 'Banana Bread', 'Oreo', 'Lemon and Raspberry', 'Raspberry Chocolate', 'Raspberry Lemonade', 'Chocolate Overload', 'Mango',
+      'White Chocolate Ginger', 'Jammie Dodger', 'Banoffee', 'White Chocolate Biscoff', 'Hot Chocolate', 'KitKat', 'Lemon and Elderflower', 'Lemon',
+      'Lindt Chocolate', 'M&M', 'Milkybar', 'Milk Chocolate', 'Vanilla', "Pimm's (contains alcohol)", 'Summer Berry', 'Lemon and Blueberry',
+      'White Chocolate Raspberry', 'Gin and Tonic (contains alcohol)', 'Mocha', 'Carrot Cake', 'Snickers', 'Apple Crumble', 'Milky Way',
+      'Prosecco (contains alcohol)', 'Limoncello (contains alcohol)', 'Black Forest (contains alcohol)', 'Kinder Bueno', 'Triple Chocolate',
+      'Mars Bar', 'Bounty', 'Strawberry Milkshake', 'Chocolate Mint', 'Custard Cream', 'White Chocolate Pistachio', 'Rocky Road', 'Caramilk',
+      'Baileys (contains alcohol)', 'Honeycomb', 'Nutella', 'Malteser', 'Toblerone', 'Biscoff', 'White Chocolate Strawberry'
+    ] },
+
+    // ---- Gluten Friendly catering (kitchen is not 100% gluten-free — see CATEGORY_NOTES above) ----
+    { id: 'gf-cupcake-chocolate', category: 'Gluten Friendly', name: 'Chocolate Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-vanilla', category: 'Gluten Friendly', name: 'Vanilla Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-carrot-cake', category: 'Gluten Friendly', name: 'Carrot Cake Cupcakes', isGfCupcake: true, glutenFriendly: true, photo: 'https://i.ibb.co/bMksrJMq/E8-A27-B1-D-CE5-F-400-C-A765-42-C33768-D240.png' },
+    { id: 'gf-cupcake-lemon-raspberry', category: 'Gluten Friendly', name: 'Lemon Raspberry Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-lemon-blueberry', category: 'Gluten Friendly', name: 'Lemon Blueberry Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-white-choc-raspberry', category: 'Gluten Friendly', name: 'White Chocolate Raspberry Cupcakes', isGfCupcake: true, glutenFriendly: true, seasonal: true },
+    { id: 'gf-cupcake-chai-latte', category: 'Gluten Friendly', name: 'Chai Latte Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-white-chocolate', category: 'Gluten Friendly', name: 'White Chocolate Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-marble', category: 'Gluten Friendly', name: 'Marble Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cupcake-coffee-walnut', category: 'Gluten Friendly', name: 'Coffee and Walnut Cupcakes', isGfCupcake: true, glutenFriendly: true },
+    { id: 'gf-cookies-double-chocolate', category: 'Gluten Friendly', name: 'Double Chocolate Cookies', price: 80, glutenFriendly: true },
+    { id: 'gf-cake-chocolate', category: 'Gluten Friendly', name: 'Chocolate Cake', price: 100, glutenFriendly: true },
+    { id: 'gf-brownies', category: 'Gluten Friendly', name: 'Brownies', slabPrice: 100, glutenFriendly: true },
+    { id: 'gf-cheesecake-brownies', category: 'Gluten Friendly', name: 'Cheesecake Brownies', slabPrice: 110, glutenFriendly: true },
+    { id: 'gf-cake-carrot', category: 'Gluten Friendly', name: 'Carrot Cake', price: 100, glutenFriendly: true },
+    { id: 'gf-cheesecake-10inch-shallow', category: 'Gluten Friendly', name: '10" Cheesecake (Shallow)', price: 100, startingPrice: true, glutenFriendly: true },
+    { id: 'gf-cheesecake-7inch-deep', category: 'Gluten Friendly', name: '7" Cheesecake (Deep)', price: 110, startingPrice: true, glutenFriendly: true, photo: 'https://i.ibb.co/r2sZ9kM9/7-AC0-A4-D1-D42-E-4-EA9-970-F-4583181546-B6.png' },
+    { id: 'gf-cheesecake-flavour-list', category: 'Gluten Friendly', name: 'Available Cheesecake Flavours', description: 'Let me know your pick when you order.', isInfoCard: true, glutenFriendly: true, flavourList: [
+      'Lemon Raspberry', 'Chocolate', 'Raspberry and Chocolate', 'Mango', 'White Chocolate Ginger', 'White Chocolate', 'Lemon',
+      'Summer Berry', 'Lemon and Blueberry', 'Mocha', 'Triple Chocolate', 'Eton Mess (Strawberry, Vanilla and Meringue)', 'White Chocolate Pistachio'
+    ] },
+
+    // ---- Savoury Catering (most items priced per person — see CATEGORY_NOTES above) ----
+    { id: 'catering-finger-sandwiches', category: 'Savoury Catering', name: 'Finger Sandwiches', price: 75, note: 'Fillings based on dietary requirements and seasonal produce availability.', photo: 'https://i.ibb.co/bDvjBjb/C63792-C4-A6-C7-4-C3-A-B150-55707-C934-FB7.png' },
+    { id: 'catering-turkish-sandwiches', category: 'Savoury Catering', name: 'Italian Turkish Bread Style Sandwiches', price: 90, note: 'Fillings based on dietary requirements and seasonal produce availability.' },
+    { id: 'catering-wraps', category: 'Savoury Catering', name: 'Wraps', price: 80, note: 'Fillings based on dietary requirements and seasonal produce availability.' },
+    { id: 'catering-gf-wraps', category: 'Savoury Catering', name: 'Gluten Free Wraps', price: 15, perPerson: true, note: 'Fillings based on dietary requirements and seasonal produce availability', glutenFriendly: true },
+
+    { id: 'quiche-mixed', category: 'Savoury Catering', name: 'Mixed Mini Quiche', note: 'Fillings are my choice and may include Lorraine, Spinach and Fetta, Chorizo Capsicum, Mediterranean (semi-dried tomato, olives, fetta, capsicum), Ham and Swiss with Caramelised Onion, or Mushroom and Mozzarella.', isPlatter: true, photo: 'https://i.ibb.co/nqWD25hx/1-DC0-F2-D5-80-DC-4-E09-9-A7-B-127-F2-A1-A90-D5.png', platterSizes: [
+      { key: 'small', label: 'Small — 10 pieces', price: 25 },
+      { key: 'large', label: 'Large — 24 pieces', price: 55 }
+    ] },
+
+    { id: 'catering-sausage-rolls', category: 'Savoury Catering', name: 'Mini Sausage Rolls', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 12 pieces', price: 25 },
+      { key: 'large', label: 'Large — 30 pieces', price: 60 }
+    ] },
+    { id: 'catering-spinach-fetta-rolls', category: 'Savoury Catering', name: 'Spinach and Fetta Rolls', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 12 pieces', price: 25 },
+      { key: 'large', label: 'Large — 30 pieces', price: 60 }
+    ] },
+    { id: 'catering-turkey-brie-tarts', category: 'Savoury Catering', name: 'Filo Bites', note: 'Available in two flavours: Turkey, Brie and Cranberry, or Mediterranean Veg, Fetta and Balsamic.', isPlatter: true, photo: 'https://i.ibb.co/20ThTWC8/EDBD0-B08-8-DDF-4-E93-8-CC7-307819784372.png', platterSizes: [
+      { key: 'small', label: 'Small — 10 pieces', price: 25 },
+      { key: 'large', label: 'Large — 24 pieces', price: 55 }
+    ] },
+    { id: 'catering-meatballs-tomato-sugo', category: 'Savoury Catering', name: 'Meatballs in Tomato Sugo', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 15 pieces', price: 35 },
+      { key: 'large', label: 'Large — 40 pieces', price: 80 }
+    ] },
+    { id: 'catering-meatballs-bbq', category: 'Savoury Catering', name: 'Meatballs in BBQ Sauce', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 15 pieces', price: 35 },
+      { key: 'large', label: 'Large — 40 pieces', price: 80 }
+    ] },
+
+    { id: 'catering-platter-fruit', category: 'Savoury Catering', name: 'Fruit Platter', note: 'Final cost depends on seasonal produce availability and whether higher-priced fruits are included.', isPlatter: true, startingPrice: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 45 },
+      { key: 'medium', label: 'Medium', price: 70 },
+      { key: 'large', label: 'Large', price: 90 }
+    ] },
+    { id: 'catering-platter-antipasto', category: 'Savoury Catering', name: 'Antipasto and Veg Platter with Dips', hidden: true, isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — serves 10', price: 80 },
+      { key: 'medium', label: 'Medium — serves 25', price: 80 },
+      { key: 'large', label: 'Large — serves 40', price: 80 }
+    ] },
+    { id: 'catering-platter-cheese', category: 'Savoury Catering', name: 'Cheese Platter', note: 'Add cold cuts for an extra $80 — mention it when you order', hidden: true, isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — serves 10', price: 80 },
+      { key: 'medium', label: 'Medium — serves 25', price: 80 },
+      { key: 'large', label: 'Large — serves 40', price: 80 }
+    ] },
+
+    { id: 'salad-pasta', category: 'Savoury Catering', name: 'Pasta Salad', isPlatter: true, photo: 'https://i.ibb.co/RpLqsmv1/6-C9658-A4-9-C2-B-4673-ACE6-243-E8-FADD744.png', addOns: [
+      { id: 'chorizo', name: 'Chorizo', pricesBySize: { small: 15, medium: 20, large: 25 } }
+    ], platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 30 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 40 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 50 }
+    ] },
+    { id: 'salad-potato', category: 'Savoury Catering', name: 'Potato Salad', isPlatter: true, addOns: [
+      { id: 'chorizo', name: 'Chorizo', pricesBySize: { small: 15, medium: 20, large: 25 } }
+    ], platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 30 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 40 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 50 }
+    ] },
+    { id: 'salad-garden', category: 'Savoury Catering', name: 'Garden Salad', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 30 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 40 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 50 }
+    ] },
+    { id: 'salad-caprese', category: 'Savoury Catering', name: 'Caprese Salad', hidden: true, isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 40 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 60 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 80 }
+    ] },
+    { id: 'salad-pear-walnut', category: 'Savoury Catering', name: 'Pear and Walnut Salad', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 30 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 40 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 50 }
+    ] },
+    { id: 'salad-avocado', category: 'Savoury Catering', name: 'Avocado Salad', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 40 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 50 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 60 }
+    ] },
+    { id: 'salad-pumpkin', category: 'Savoury Catering', name: 'Pumpkin Salad', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 40 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 50 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 60 }
+    ] },
+    { id: 'salad-roast-veg-halloumi', category: 'Savoury Catering', name: 'Roast Veg and Halloumi Salad', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 4-6 side serves', price: 30 },
+      { key: 'medium', label: 'Medium — 6-9 side serves', price: 40 },
+      { key: 'large', label: 'Large — 8-12 side serves', price: 50 }
+    ] },
+    { id: 'catering-roast-chicken', category: 'Savoury Catering', name: 'Roast Chicken', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 60 },
+      { key: 'large', label: 'Large', price: 90 }
+    ] },
+    { id: 'catering-roast-lamb', category: 'Savoury Catering', name: 'Roast Lamb', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 70 },
+      { key: 'large', label: 'Large', price: 110 }
+    ] },
+    { id: 'catering-roast-pork', category: 'Savoury Catering', name: 'Roast Pork', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 60 },
+      { key: 'large', label: 'Large', price: 95 }
+    ] },
+    { id: 'catering-roast-porchetta', category: 'Savoury Catering', name: 'Roast Porchetta', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 75 },
+      { key: 'large', label: 'Large', price: 130 }
+    ] },
+    { id: 'catering-roast-beef', category: 'Savoury Catering', name: 'Roast Beef', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 75 },
+      { key: 'large', label: 'Large', price: 110 }
+    ] },
+    { id: 'catering-chicken-prosciutto-involtini', category: 'Savoury Catering', name: 'Chicken and Prosciutto Involtini', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small', price: 75 },
+      { key: 'large', label: 'Large', price: 140 }
+    ] },
+
+    { id: 'arancini-mixed', category: 'Savoury Catering', name: 'Mixed Arancini', note: 'Fillings are my choice and may include Pesto Mushroom and Parmesan, Mushroom Parmesan, Pumpkin Pesto and Pinenut, Beef Ragu and Mozzarella, Formaggio, Mushroom and Pumpkin (Vegan), or Semi-Dried Tomato, Roast Capsicum, Olives and Eggplant (Vegan).', isPlatter: true, platterSizes: [
+      { key: 'small', label: 'Small — 15 pieces', price: 35 },
+      { key: 'large', label: 'Large — 40 pieces', price: 80 }
+    ] },
+
+    { id: 'skewer-fruit', category: 'Savoury Catering', name: 'Mini Skewer — Fruit', photo: 'https://i.ibb.co/nN3fMLRw/8-D6-A900-F-1-F15-482-D-AE99-A3-D39-ACE329-F.png', tieredPricing: { minQty: 20, basePrice: 45, extraPerUnit: 2 } },
+    { id: 'skewer-tomato-bocconcini', category: 'Savoury Catering', name: 'Mini Skewer — Tomato and Bocconcini', tieredPricing: { minQty: 20, basePrice: 55, extraPerUnit: 2 } },
+    { id: 'skewer-prosciutto-mozzarella', category: 'Savoury Catering', name: 'Mini Skewer — Prosciutto and Mozzarella', tieredPricing: { minQty: 20, basePrice: 55, extraPerUnit: 2 } },
+    { id: 'skewer-veg-halloumi', category: 'Savoury Catering', name: 'Mini Skewer — Marinated Veg and Halloumi', tieredPricing: { minQty: 20, basePrice: 45, extraPerUnit: 2 } },
+    { id: 'skewer-antipasti-classic', category: 'Savoury Catering', name: 'Mini Skewer — Classic Antipasti Style', tieredPricing: { minQty: 20, basePrice: 45, extraPerUnit: 2 } },
+    { id: 'skewer-salmon-cucumber', category: 'Savoury Catering', name: 'Mini Skewer — Smoked Salmon and Cucumber', tieredPricing: { minQty: 20, basePrice: 45, extraPerUnit: 2 } },
+
+    // ---- Sweet Tray Bakes (sold as a whole tray/slab, cut to suit the event) ----
+    { id: 'traybake-banana-cake', category: 'Sweet Tray Bakes', name: 'Banana Cake', slabPrice: 80 },
+    { id: 'traybake-lemon-crumble-bars', category: 'Sweet Tray Bakes', name: 'Lemon Crumble Bars', slabPrice: 80 },
+    { id: 'traybake-raspberry-crumble-bars', category: 'Sweet Tray Bakes', name: 'Raspberry Crumble Bars', slabPrice: 80 },
+    { id: 'traybake-biscoff-tiffin', category: 'Sweet Tray Bakes', name: 'Biscoff Tiffin', slabPrice: 85 },
+    { id: 'traybake-lemon-bars', category: 'Sweet Tray Bakes', name: 'Lemon Bars', slabPrice: 80 },
+    { id: 'traybake-apple-crumble', category: 'Sweet Tray Bakes', name: 'Apple Crumble Cake', slabPrice: 80, photo: 'https://i.ibb.co/8gV6Q1h9/4-D075708-EEFC-4-CA4-8-F0-F-EBE0-C1321-D23.png' },
+    { id: 'traybake-apple-custard-streusel-slice', category: 'Sweet Tray Bakes', name: 'Apple Custard Streusel Slice', slabPrice: 80, photo: 'https://i.ibb.co/W4r6M226/3-B9-B3-F91-4-BAC-4-B56-9-E1-F-FC46-BFAD02-E1.png' },
+    { id: 'traybake-gin-tonic', category: 'Sweet Tray Bakes', name: 'Gin and Tonic Cake', slabPrice: 90, note: 'Contains alcohol' },
+    { id: 'traybake-gin-lemonade', category: 'Sweet Tray Bakes', name: 'Gin and Lemonade Cake', slabPrice: 90, note: 'Contains alcohol' },
+    { id: 'traybake-malteser-cake', category: 'Sweet Tray Bakes', name: 'Malteser Cake', slabPrice: 90 },
+    { id: 'traybake-twix-rocky-road', category: 'Sweet Tray Bakes', name: 'Twix Rocky Road', slabPrice: 80 },
+    { id: 'traybake-baileys-rocky-road', category: 'Sweet Tray Bakes', name: 'Baileys Rocky Road', slabPrice: 80, note: 'Contains alcohol' },
+    { id: 'traybake-chocolate-cake', category: 'Sweet Tray Bakes', name: 'Chocolate Cake', slabPrice: 80 },
+    { id: 'traybake-carrot-cake', category: 'Sweet Tray Bakes', name: 'Carrot Cake', slabPrice: 70 },
+    { id: 'traybake-nutella-rocky-road', category: 'Sweet Tray Bakes', name: 'Nutella Rocky Road', slabPrice: 80 },
+    { id: 'traybake-rolo-rocky-road', category: 'Sweet Tray Bakes', name: 'Rolo Rocky Road', slabPrice: 80 },
+    { id: 'traybake-malteser-tiffin', category: 'Sweet Tray Bakes', name: 'Malteser Tiffin', slabPrice: 85 },
+    { id: 'traybake-caramilk-rocky-road', category: 'Sweet Tray Bakes', name: 'Caramilk Rocky Road', slabPrice: 80 },
+    { id: 'traybake-biscoff-rocky-road', category: 'Sweet Tray Bakes', name: 'Biscoff Rocky Road', slabPrice: 80 },
+    { id: 'traybake-oreo-rocky-road', category: 'Sweet Tray Bakes', name: 'Oreo Rocky Road', slabPrice: 80 },
+    { id: 'traybake-salted-caramel-nut-slice', category: 'Sweet Tray Bakes', name: 'Salted Caramel and Nut Slice', slabPrice: 70, photo: 'https://i.ibb.co/LhBfGzs6/4-A992-C06-7833-4082-9520-A4-D99-EB52-C9-A.png' },
+    { id: 'traybake-pink-gin-lemonade', category: 'Sweet Tray Bakes', name: 'Pink Gin and Lemonade Cake', slabPrice: 90, note: 'Contains alcohol' },
+    { id: 'traybake-pink-gin-tonic', category: 'Sweet Tray Bakes', name: 'Pink Gin and Tonic Cake', slabPrice: 90, note: 'Contains alcohol' },
+    { id: 'traybake-nutella-crunch-slice', category: 'Sweet Tray Bakes', name: 'Nutella Crunch Slice', slabPrice: 80, photo: 'https://i.ibb.co/99YFXG0Z/94256-B88-112-A-407-F-8132-2-DAFD6-A97567.png' },
+    { id: 'traybake-biscoff-crunch-slice', category: 'Sweet Tray Bakes', name: 'Biscoff Crunch Slice', slabPrice: 80, photo: 'https://i.ibb.co/nsLSSpN9/0-BE3-B345-3-D8-F-4080-97-DF-77-E42708-EEA6.png' },
+    { id: 'traybake-marsbar-crunch-slice', category: 'Sweet Tray Bakes', name: 'Marsbar Crunch Slice', slabPrice: 80, photo: 'https://i.ibb.co/dJmHkcYv/931025-FB-F77-E-422-A-AC80-F6628887-DF7-E.png' },
+
+    // ---- Vegan Bakes (pricing is a $0 placeholder until confirmed — see CATEGORY_NOTES above) ----
+    { id: 'vegan-cookie-bars', category: 'Vegan Bakes', name: 'Cookie Bars', enquireOnly: true },
+    { id: 'vegan-choc-chip-cookies', category: 'Vegan Bakes', name: 'Choc Chip Cookies', enquireOnly: true },
+    { id: 'vegan-carrot-cake', category: 'Vegan Bakes', name: 'Carrot Cake', enquireOnly: true },
+    { id: 'vegan-biscoff-cake', category: 'Vegan Bakes', name: 'Biscoff Cake', enquireOnly: true },
+    { id: 'vegan-lemon-drizzle-cake', category: 'Vegan Bakes', name: 'Lemon Drizzle Cake', enquireOnly: true },
+    { id: 'vegan-victoria-sponge', category: 'Vegan Bakes', name: 'Victoria Sponge Cake', enquireOnly: true },
+    { id: 'vegan-chocolate-cake', category: 'Vegan Bakes', name: 'Chocolate Cake', enquireOnly: true },
+    { id: 'vegan-biscoff-cupcakes', category: 'Vegan Bakes', name: 'Biscoff Cupcakes', enquireOnly: true },
+    { id: 'vegan-vanilla-cupcakes', category: 'Vegan Bakes', name: 'Vanilla Cupcakes', enquireOnly: true },
+    { id: 'vegan-brownies', category: 'Vegan Bakes', name: 'Brownies', enquireOnly: true },
+    { id: 'vegan-vanilla-cheesecake', category: 'Vegan Bakes', name: 'Vanilla Cheesecake', enquireOnly: true },
+    { id: 'vegan-biscoff-cheesecake', category: 'Vegan Bakes', name: 'Biscoff Cheesecake', enquireOnly: true },
+    { id: 'vegan-strawberry-cheesecake', category: 'Vegan Bakes', name: 'Strawberry Cheesecake', enquireOnly: true },
+    { id: 'vegan-lemon-cheesecake', category: 'Vegan Bakes', name: 'Lemon Cheesecake', enquireOnly: true },
+
+    // ---- Dessert Cups (pricing to be finalised — enquire for now) ----
+    { id: 'dessertcup-nutella', category: 'Dessert Cups', name: 'Dessert Cup — Nutella', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-lemon-blueberry', category: 'Dessert Cups', name: 'Dessert Cup — Lemon and Blueberry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-lemon', category: 'Dessert Cups', name: 'Dessert Cup — Lemon', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-lemon-raspberry', category: 'Dessert Cups', name: 'Dessert Cup — Lemon and Raspberry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-chocolate', category: 'Dessert Cups', name: 'Dessert Cup — Chocolate', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-prosecco-strawberry', category: 'Dessert Cups', name: 'Dessert Cup — Prosecco and Strawberry', price: 50, note: 'Contains alcohol. Sold in sets of 10 pieces.' },
+    { id: 'dessertcup-biscoff', category: 'Dessert Cups', name: 'Dessert Cup — Biscoff', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-raspberry-white-chocolate', category: 'Dessert Cups', name: 'Dessert Cup — Raspberry White Chocolate', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-marsbar', category: 'Dessert Cups', name: 'Dessert Cup — Mars Bar', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'dessertcup-pistachio-white-chocolate', category: 'Dessert Cups', name: 'Dessert Cup — Pistachio White Chocolate', price: 50, note: 'Sold in sets of 10 pieces' },
+
+    { id: 'pavlovacup-chocolate', category: 'Dessert Cups', name: 'Pavlova Cup — Chocolate', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-lemon-blueberry', category: 'Dessert Cups', name: 'Pavlova Cup — Lemon Blueberry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-lemon-raspberry', category: 'Dessert Cups', name: 'Pavlova Cup — Lemon Raspberry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-chocolate-hazelnut', category: 'Dessert Cups', name: 'Pavlova Cup — Chocolate Hazelnut', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-mango-passionfruit', category: 'Dessert Cups', name: 'Pavlova Cup — Mango Passionfruit', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-timtams', category: 'Dessert Cups', name: 'Pavlova Cup — Tim Tams', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-lemon-blackberry', category: 'Dessert Cups', name: 'Pavlova Cup — Lemon and Blackberry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-white-choc-pistachio', category: 'Dessert Cups', name: 'Pavlova Cup — White Chocolate Pistachio', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-kiwi-berry', category: 'Dessert Cups', name: 'Pavlova Cup — Kiwi and Berry', price: 50, note: 'Sold in sets of 10 pieces' },
+    { id: 'pavlovacup-mixed-berry', category: 'Dessert Cups', name: 'Pavlova Cup — Mixed Berry', price: 50, note: 'Sold in sets of 10 pieces' },
+  ];
+
+  // ---------- EDIT YOUR GALLERY HERE ----------
+  // Add one entry per gallery photo. Upload the photo to a free image host like
+  // imgbb.com, then paste the direct link below. "caption" is optional.
+  const GALLERY_PHOTOS = [
+    { url: 'https://i.ibb.co/HLtXwzvp/F04-B8-B4-B-34-A4-4-B67-A317-A42855-E075-C1.png' },
+    { url: 'https://i.ibb.co/TByj6qLn/FE55-A9-C9-AAC6-4-D75-ADCD-0-E1-B0478-D11-D.png' },
+    { url: 'https://i.ibb.co/fVp81mrn/B6-B8-BC10-4-C24-4-F8-D-8-D9-D-19-EDE7811-ACF.png' },
+    { url: 'https://i.ibb.co/Y4hL13Bh/2587-F553-B8-DA-4-CE5-9730-CFDDCA1-E7-CA9.png' },
+    { url: 'https://i.ibb.co/gbTx7xFF/A8-C43485-1-A2-A-4434-98-E8-5-DDFCF9035-EA.png' },
+    { url: 'https://i.ibb.co/9mnyDzv1/912-ED14-C-1089-4819-AF6-D-C92-B4-EEA96-E6.png' },
+    { url: 'https://i.ibb.co/ym3ptbPG/FD408143-36-E0-44-EA-BA6-C-7-FC5-E94-C0-F30.png' },
+    { url: 'https://i.ibb.co/TB4q2VTF/2-CDA103-B-821-C-4-D3-E-825-B-182-B048-B7515.png' },
+    { url: 'https://i.ibb.co/67KrZGzL/6-D35-A561-B739-445-A-BAD3-3221128-A58-EA.jpg' },
+    // { url: 'https://i.ibb.co/xxxxxxx/photo.jpg', caption: 'Custom birthday cake, October 2026' },
+  ];
+
+  const BUSINESS_EMAIL = 'thelittlecupcafe@gmail.com';
+  const ADMIN_PASSCODE = 'cupcake2026'; // change this to a passcode only you know
+  const TART_PRICING_DEFAULT = { large: 30, small: 35, deep: 60, shallow: 50 }; // large = 6 large tarts, small = 12 small tarts, deep/shallow = big tart base styles
+  const CUPCAKE_PRICING_DEFAULT = { box: 30, mini24: 55 }; // per box of 6, and per box of 24 minis; some seasonal-produce flavours cost more, confirmed manually
+  const GF_CUPCAKE_PRICING_DEFAULT = { box: 40, mini24: 65 }; // per box of 6, and per box of 24 minis, gluten-friendly
+  const SLAB_SIZE_UPCHARGE_DEFAULT = { medium: 10, mini: 20 }; // added on top of the 14-large-piece price for the 28-medium and 40-mini options — Brownies & Blondies, Sweet Tray Bakes, and Gluten Friendly brownies
+
+  const CATEGORY_NOTES = {
+    'Cookies': 'Sold as a batch of 16 large cookies or 30 mini cookies — same price either way, just let me know your preference when you order.',
+    'Gluten Friendly': 'Made in a kitchen that is not 100% gluten-free — please tell me about any allergies or intolerances when you order.',
+    'Savoury Catering': 'For large orders or requests outside what\'s listed here, please send an enquiry so I can give you accurate planning and pricing.',
+    'Vegan Bakes': 'Pricing for these vegan items is still being finalised — ask me for current pricing when you enquire.'
+  };
+
+  function getTartPricing() {
+    const o = menuOverrides['_tartPricing'];
+    return o ? { ...TART_PRICING_DEFAULT, ...o } : TART_PRICING_DEFAULT;
+  }
+
+  function getCupcakePricing() {
+    const o = menuOverrides['_cupcakePricing'];
+    return o ? { ...CUPCAKE_PRICING_DEFAULT, ...o } : CUPCAKE_PRICING_DEFAULT;
+  }
+
+  function getGfCupcakePricing() {
+    const o = menuOverrides['_gfCupcakePricing'];
+    return o ? { ...GF_CUPCAKE_PRICING_DEFAULT, ...o } : GF_CUPCAKE_PRICING_DEFAULT;
+  }
+
+  function getSlabSizeUpcharge() {
+    const o = menuOverrides['_slabSizeUpcharge'];
+    return o ? { ...SLAB_SIZE_UPCHARGE_DEFAULT, ...o } : SLAB_SIZE_UPCHARGE_DEFAULT;
+  }
+
+  function itemGetsSlabUpcharge(item) {
+    return item.category === 'Brownies & Blondies' || item.category === 'Sweet Tray Bakes' || item.category === 'Gluten Friendly';
+  }
+
+  function getSlabTierPrices(item, eff) {
+    const upcharge = itemGetsSlabUpcharge(item) ? getSlabSizeUpcharge() : { medium: 0, mini: 0 };
+    return {
+      large14: eff.slabPrice,
+      medium28: eff.slabPrice + upcharge.medium,
+      mini40: eff.slabPrice + upcharge.mini
+    };
+  }
+
+  function getTieredTotal(tp, qty) {
+    if (!tp || qty <= 0) return 0;
+    if (qty <= tp.minQty) return tp.basePrice;
+    return tp.basePrice + tp.extraPerUnit * (qty - tp.minQty);
+  }
+
+  let cart = {};
+  let addOnSelections = {}; // key: `${itemId}:${sizeKey}:${addOnId}` -> true when the customer has ticked that add-on for that size
+  let menuOverrides = {};
+  let currentFilter = 'Home';
+  let adminRecordsCache = {};
+
+  function getSelectedAddOnsForSize(item, sizeKey) {
+    if (!item.addOns) return [];
+    return item.addOns.filter(a => addOnSelections[item.id + ':' + sizeKey + ':' + a.id]);
+  }
+
+  function getSizeAddOnTotal(item, sizeKey) {
+    return getSelectedAddOnsForSize(item, sizeKey).reduce((sum, a) => sum + (a.pricesBySize[sizeKey] || 0), 0);
+  }
+
+  function getSizeAddOnLabel(item, sizeKey) {
+    const selected = getSelectedAddOnsForSize(item, sizeKey);
+    return selected.length ? ' + ' + selected.map(a => a.name).join(' + ') : '';
+  }
+
+  function toggleAddOn(key, checked) {
+    if (checked) addOnSelections[key] = true; else delete addOnSelections[key];
+    renderMenu();
+    updateCartBar();
+  }
+
+  // ---------- Photos (menu items + gallery) ----------
+  let itemPhotos = {}; // itemId -> data URI or URL, loaded once at startup
+
+  // Reads a File, downsizes it on a canvas, and returns a compressed JPEG data URI.
+  // Keeps uploads well under the 5MB per-key storage limit regardless of the original photo size.
+  function resizeImageToDataUri(file, maxDim = 1200, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+            else { width = Math.round(width * maxDim / height); height = maxDim; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('Could not read that image'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Could not read that file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function loadItemPhotos() {
+    try {
+      const keysRes = await window.storage.list('item-photo:', true);
+      const keys = keysRes?.keys || [];
+      const results = await Promise.all(keys.map(async k => {
+        try {
+          const res = await window.storage.get(k, true);
+          return res ? { id: k.slice('item-photo:'.length), value: res.value } : null;
+        } catch (e) { return null; }
+      }));
+      results.forEach(r => { if (r) itemPhotos[r.id] = r.value; });
+    } catch (e) { /* no photos saved yet */ }
+  }
+
+  function itemPhotoHtml(item) {
+    const photo = itemPhotos[item.id] || item.photo;
+    return photo ? `<img src="${escapeHtml(photo)}" class="item-photo" alt="${escapeHtml(item.name)}" loading="lazy">` : '';
+  }
+
+  function photoEditorHtml(itemId) {
+    const current = itemPhotos[itemId];
+    return `<div class="photo-editor-row">
+      ${current ? `<img src="${escapeHtml(current)}" class="photo-thumb" alt="">` : ''}
+      <label>Photo <input type="file" accept="image/*" id="photo-file-${itemId}"></label>
+      <label>or URL <input type="text" placeholder="paste image URL" id="photo-url-${itemId}" style="width:150px;"></label>
+      <button type="button" onclick="saveItemPhoto('${itemId}')" class="btn-secondary">Save photo</button>
+      ${current ? `<button type="button" onclick="removeItemPhoto('${itemId}')" class="btn-secondary">Remove photo</button>` : ''}
+    </div>`;
+  }
+
+  async function saveItemPhoto(itemId) {
+    const fileInput = document.getElementById(`photo-file-${itemId}`);
+    const urlInput = document.getElementById(`photo-url-${itemId}`);
+    let dataUri = urlInput.value.trim();
+    if (fileInput.files && fileInput.files[0]) {
+      try {
+        dataUri = await resizeImageToDataUri(fileInput.files[0]);
+      } catch (e) {
+        alert('Could not read that image — please try a different file.');
+        return;
+      }
+    }
+    if (!dataUri) { alert('Choose a photo or paste an image URL first.'); return; }
+    try {
+      await window.storage.set('item-photo:' + itemId, dataUri, true);
+      itemPhotos[itemId] = dataUri;
+      renderMenuEditor();
+      renderMenu();
+    } catch (e) {
+      alert('Could not save the photo — please try again.');
+    }
+  }
+
+  async function removeItemPhoto(itemId) {
+    try {
+      await window.storage.delete('item-photo:' + itemId, true);
+      delete itemPhotos[itemId];
+      renderMenuEditor();
+      renderMenu();
+    } catch (e) {
+      alert('Could not remove the photo — please try again.');
+    }
+  }
+
+  async function fetchAllGalleryPhotos() {
+    try {
+      const keysRes = await window.storage.list('gallery-photo:', true);
+      const keys = keysRes?.keys || [];
+      const results = await Promise.all(keys.map(async k => {
+        try {
+          const res = await window.storage.get(k, true);
+          return res ? { key: k, ...JSON.parse(res.value) } : null;
+        } catch (e) { return null; }
+      }));
+      const photos = results.filter(Boolean);
+      photos.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+      return photos;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function loadPublicGallery() {
+    const el = document.getElementById('galleryGrid');
+    if (!el) return;
+    if (GALLERY_PHOTOS.length === 0) {
+      el.innerHTML = '<p class="empty-category">Photos coming soon.</p>';
+      return;
+    }
+    el.innerHTML = GALLERY_PHOTOS.map(p => `
+      <figure class="gallery-item">
+        <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.caption || 'The Little Cup Café')}" loading="lazy">
+        ${p.caption ? `<figcaption>${escapeHtml(p.caption)}</figcaption>` : ''}
+      </figure>
+    `).join('');
+  }
+
+  async function loadGalleryAdmin() {
+    const el = document.getElementById('adminGalleryList');
+    el.innerHTML = '<p class="empty-note">Loading…</p>';
+    const photos = await fetchAllGalleryPhotos();
+    if (photos.length === 0) {
+      el.innerHTML = '<p class="empty-note">No gallery photos yet.</p>';
+      return;
+    }
+    el.innerHTML = photos.map(p => `
+      <div class="admin-gallery-item">
+        <img src="${escapeHtml(p.url)}" alt="">
+        <div>
+          <p>${escapeHtml(p.caption || '(no caption)')}</p>
+          <button type="button" onclick="removeGalleryPhoto('${p.key}')" class="btn-secondary">Remove</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function addGalleryPhoto() {
+    const fileInput = document.getElementById('galleryFileInput');
+    const urlInput = document.getElementById('galleryUrlInput');
+    const captionInput = document.getElementById('galleryCaptionInput');
+    let url = urlInput.value.trim();
+    const caption = captionInput.value.trim();
+    if (fileInput.files && fileInput.files[0]) {
+      try {
+        url = await resizeImageToDataUri(fileInput.files[0]);
+      } catch (e) {
+        alert('Could not read that image — please try a different file.');
+        return;
+      }
+    }
+    if (!url) { alert('Choose a photo or paste an image URL first.'); return; }
+    const key = 'gallery-photo:' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+    const entry = { url, caption, addedAt: new Date().toISOString() };
+    try {
+      await window.storage.set(key, JSON.stringify(entry), true);
+      fileInput.value = ''; urlInput.value = ''; captionInput.value = '';
+      loadGalleryAdmin();
+      loadPublicGallery();
+    } catch (e) {
+      alert('Could not save the photo — please try again.');
+    }
+  }
+
+  async function removeGalleryPhoto(key) {
+    try {
+      await window.storage.delete(key, true);
+      loadGalleryAdmin();
+      loadPublicGallery();
+    } catch (e) {
+      alert('Could not remove the photo — please try again.');
+    }
+  }
+
+  async function init() {
+    await loadOverrides();
+    await loadItemPhotos();
+    renderMenu();
+    updateCartBar();
+    renderSeasonalCallout();
+    setupReveal();
+    loadPublicGallery();
+  }
+
+  async function loadOverrides() {
+    try {
+      const res = await window.storage.get('menu-overrides', true);
+      menuOverrides = res ? JSON.parse(res.value) : {};
+    } catch (e) {
+      menuOverrides = {};
+    }
+  }
+
+  function getEffectiveItem(item) {
+    const o = menuOverrides[item.id] || {};
+    if (item.isTart) {
+      return { ...item, available: o.available !== undefined ? o.available : true };
+    }
+    if (item.isCupcake) {
+      return { ...item, available: o.available !== undefined ? o.available : true };
+    }
+    if (item.isGfCupcake) {
+      return { ...item, available: o.available !== undefined ? o.available : true };
+    }
+    if (item.isPlatter) {
+      const overriddenSizes = (item.platterSizes || []).map(s => {
+        const sizeOverride = o.sizes && o.sizes[s.key];
+        let price = s.price;
+        let label = s.label;
+        if (sizeOverride !== undefined && sizeOverride !== null) {
+          if (typeof sizeOverride === 'object') {
+            if (sizeOverride.price !== undefined) price = sizeOverride.price;
+            if (sizeOverride.label !== undefined) label = sizeOverride.label;
+          } else {
+            price = sizeOverride; // legacy saved format: a bare number meant price-only
+          }
+        }
+        return { ...s, price, label };
+      });
+      const overriddenAddOns = (item.addOns || []).map(addOn => {
+        const addOnOverride = o.addOnPrices && o.addOnPrices[addOn.id];
+        const pricesBySize = addOnOverride ? { ...addOn.pricesBySize, ...addOnOverride } : addOn.pricesBySize;
+        return { ...addOn, pricesBySize };
+      });
+      return { ...item, platterSizes: overriddenSizes, addOns: overriddenAddOns, available: o.available !== undefined ? o.available : true };
+    }
+    if (item.tieredPricing) {
+      return {
+        ...item,
+        tieredPricing: { ...item.tieredPricing, ...(o.tieredPricing || {}) },
+        available: o.available !== undefined ? o.available : true
+      };
+    }
+    if (item.slabPrice !== undefined) {
+      return {
+        ...item,
+        slabPrice: o.slabPrice !== undefined ? o.slabPrice : item.slabPrice,
+        piecePrice: o.piecePrice !== undefined ? o.piecePrice : (item.piecePrice !== undefined ? item.piecePrice : null),
+        available: o.available !== undefined ? o.available : true
+      };
+    }
+    return {
+      ...item,
+      price: o.price !== undefined ? o.price : item.price,
+      available: o.available !== undefined ? o.available : true
+    };
+  }
+
+  function renderSeasonalCallout() {
+    const seasonalNames = MENU_ITEMS.filter(i => i.seasonal && !i.hidden && getEffectiveItem(i).available).map(i => i.name);
+    const el = document.getElementById('seasonalCallout');
+    el.textContent = seasonalNames.length ? `Right now, that includes ${seasonalNames.join(' and ')}.` : '';
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : str;
+    return div.innerHTML;
+  }
+
+  function formatCurrency(n) { return '$' + n.toFixed(2); }
+
+  function updateSectionIntro() {
+    const introEl = document.getElementById('menuIntroText');
+    const note = CATEGORY_NOTES[currentFilter];
+    if (note) {
+      introEl.textContent = note;
+      introEl.classList.add('allergen-note');
+    } else {
+      introEl.textContent = 'Tap + to add something to your order, then head down to checkout. Prices and availability change with the season.';
+      introEl.classList.remove('allergen-note');
+    }
+  }
+
+  function setFilter(cat) {
+    currentFilter = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+    updateSectionIntro();
+    renderMenu();
+  }
+
+  function renderMenu() {
+    const grid = document.getElementById('menuGrid');
+    const items = MENU_ITEMS.filter(i => i.category === currentFilter && !i.hidden);
+    if (items.length === 0) {
+      grid.innerHTML = '<p class="empty-category">Nothing listed here yet — flavours and prices coming soon.</p>';
+      return;
+    }
+    grid.innerHTML = items.map(itemTemplate).join('');
+  }
+
+  function itemTemplate(item) {
+    const eff = getEffectiveItem(item);
+    const seasonalTag = item.seasonal ? '<span class="seasonal-tag">In season</span>' : '';
+    const gfTag = item.glutenFriendly ? '<span class="gf-tag">Gluten friendly</span>' : '';
+    const noteHtml = item.note ? `<p class="card-note">${escapeHtml(item.note)}</p>` : '';
+
+    if (!eff.available) {
+      return `<div class="menu-card unavailable">${itemPhotoHtml(item)}${seasonalTag}${gfTag}<h3>${escapeHtml(item.name)}</h3>${noteHtml}${item.description ? `<p class="desc">${escapeHtml(item.description)}</p>` : ''}<p class="unavailable-tag">Currently unavailable</p></div>`;
+    }
+
+    if (item.isInfoCard) {
+      const chips = (item.flavourList || []).map(f => `<span class="flavour-chip">${escapeHtml(f)}</span>`).join('');
+      return `<div class="menu-card">${itemPhotoHtml(item)}${seasonalTag}${gfTag}<h3>${escapeHtml(item.name)}</h3>${noteHtml}${item.description ? `<p class="desc">${escapeHtml(item.description)}</p>` : ''}<div class="flavour-chips">${chips}</div></div>`;
+    }
+
+    if (item.isTart) {
+      const tp = getTartPricing();
+      const largeKey = item.id + ':tartlarge';
+      const smallKey = item.id + ':tartsmall';
+      const deepKey = item.id + ':tartdeep';
+      const shallowKey = item.id + ':tartshallow';
+      const largeQty = cart[largeKey] || 0;
+      const smallQty = cart[smallKey] || 0;
+      const deepQty = cart[deepKey] || 0;
+      const shallowQty = cart[shallowKey] || 0;
+      return `<div class="menu-card brownie-card">
+        ${itemPhotoHtml(item)}${seasonalTag}${gfTag}
+        <h3>${escapeHtml(item.name)}</h3>
+        ${noteHtml}
+        <div class="brownie-row">
+          <p class="option-label">6 large — ${formatCurrency(tp.large)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${largeKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${largeQty}</span>
+            <button onclick="changeQty('${largeKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <p class="option-label">12 small — ${formatCurrency(tp.small)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${smallKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${smallQty}</span>
+            <button onclick="changeQty('${smallKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <p class="option-label">Deep base — from ${formatCurrency(tp.deep)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${deepKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${deepQty}</span>
+            <button onclick="changeQty('${deepKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <p class="option-label">Shallow base — from ${formatCurrency(tp.shallow)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${shallowKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${shallowQty}</span>
+            <button onclick="changeQty('${shallowKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (item.isCupcake) {
+      const cp = getCupcakePricing();
+      const box6Key = item.id + ':box6';
+      const mini24Key = item.id + ':mini24';
+      const box6Qty = cart[box6Key] || 0;
+      const mini24Qty = cart[mini24Key] || 0;
+      return `<div class="menu-card brownie-card">
+        ${itemPhotoHtml(item)}${seasonalTag}
+        <h3>${escapeHtml(item.name)}</h3>
+        ${noteHtml}
+        <div class="brownie-row">
+          <div>
+            <p class="option-label">Box of 6 — from ${formatCurrency(cp.box)}</p>
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${box6Key}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${box6Qty}</span>
+            <button onclick="changeQty('${box6Key}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        ${!item.hideMiniOption ? `
+        <div class="brownie-row">
+          <div>
+            <p class="option-label">Mini — 24 pieces — from ${formatCurrency(cp.mini24)}</p>
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${mini24Key}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${mini24Qty}</span>
+            <button onclick="changeQty('${mini24Key}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>` : ''}
+      </div>`;
+    }
+
+    if (item.isGfCupcake) {
+      const gcp = getGfCupcakePricing();
+      const gfBoxKey = item.id + ':gfbox6';
+      const gfMini24Key = item.id + ':gfmini24';
+      const gfBoxQty = cart[gfBoxKey] || 0;
+      const gfMini24Qty = cart[gfMini24Key] || 0;
+      return `<div class="menu-card brownie-card">
+        ${itemPhotoHtml(item)}${seasonalTag}${gfTag}
+        <h3>${escapeHtml(item.name)}</h3>
+        ${noteHtml}
+        <div class="brownie-row">
+          <div>
+            <p class="option-label">Box of 6 — ${formatCurrency(gcp.box)}</p>
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${gfBoxKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${gfBoxQty}</span>
+            <button onclick="changeQty('${gfBoxKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <div>
+            <p class="option-label">Mini — 24 pieces — ${formatCurrency(gcp.mini24)}</p>
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${gfMini24Key}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${gfMini24Qty}</span>
+            <button onclick="changeQty('${gfMini24Key}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (item.isPlatter) {
+      const rows = eff.platterSizes.map(size => {
+        const sizeKey = item.id + ':' + size.key;
+        const sizeQty = cart[sizeKey] || 0;
+        const displayPrice = size.price + getSizeAddOnTotal(eff, size.key);
+        const priceText = item.startingPrice ? 'From ' + formatCurrency(displayPrice) : formatCurrency(displayPrice);
+        const addOnCheckboxes = (eff.addOns || []).map(addOn => {
+          const addOnKey = item.id + ':' + size.key + ':' + addOn.id;
+          const addOnPrice = addOn.pricesBySize[size.key] || 0;
+          const checked = !!addOnSelections[addOnKey];
+          return `<label class="addon-checkbox">
+            <input type="checkbox" onchange="toggleAddOn('${addOnKey}', this.checked)" ${checked ? 'checked' : ''}>
+            Add ${escapeHtml(addOn.name)} (+${formatCurrency(addOnPrice)})
+          </label>`;
+        }).join('');
+        return `<div class="brownie-row">
+          <div>
+            <p class="option-label">${escapeHtml(size.label)} — ${priceText}</p>
+            ${addOnCheckboxes}
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${sizeKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${sizeQty}</span>
+            <button onclick="changeQty('${sizeKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>`;
+      }).join('');
+      return `<div class="menu-card brownie-card">${itemPhotoHtml(item)}${seasonalTag}${gfTag}<h3>${escapeHtml(item.name)}</h3>${noteHtml}${rows}</div>`;
+    }
+
+    if (item.tieredPricing) {
+      const tp = eff.tieredPricing;
+      const tierKey = item.id + ':tier';
+      const tierQty = cart[tierKey] || 0;
+      const runningTotal = getTieredTotal(tp, tierQty);
+      return `<div class="menu-card brownie-card">
+        ${itemPhotoHtml(item)}${seasonalTag}${gfTag}
+        <h3>${escapeHtml(item.name)}</h3>
+        ${noteHtml}
+        <div class="brownie-row">
+          <div>
+            <p class="option-note">Minimum order ${tp.minQty}${tierQty > 0 ? ` — ${tierQty} selected, ${formatCurrency(runningTotal)} total` : ''}</p>
+          </div>
+          <div class="stepper">
+            <button onclick="changeQty('${tierKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${tierQty}</span>
+            <button onclick="changeQty('${tierKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (item.slabPrice !== undefined) {
+      const largeKey = item.id + ':large14';
+      const mediumKey = item.id + ':medium28';
+      const miniKey = item.id + ':mini40';
+      const pieceKey = item.id + ':piece';
+      const largeQty = cart[largeKey] || 0;
+      const mediumQty = cart[mediumKey] || 0;
+      const miniQty = cart[miniKey] || 0;
+      const pieceQty = cart[pieceKey] || 0;
+      const tierPrices = getSlabTierPrices(item, eff);
+      return `<div class="menu-card brownie-card">
+        ${itemPhotoHtml(item)}${seasonalTag}${gfTag}
+        <h3>${escapeHtml(item.name)}</h3>
+        ${noteHtml}
+        <div class="brownie-row">
+          <p class="option-label">14 large pieces — ${formatCurrency(tierPrices.large14)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${largeKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${largeQty}</span>
+            <button onclick="changeQty('${largeKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <p class="option-label">28 medium pieces — ${formatCurrency(tierPrices.medium28)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${mediumKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${mediumQty}</span>
+            <button onclick="changeQty('${mediumKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="brownie-row">
+          <p class="option-label">40 mini pieces — ${formatCurrency(tierPrices.mini40)}</p>
+          <div class="stepper">
+            <button onclick="changeQty('${miniKey}', -1)" aria-label="Decrease quantity">−</button>
+            <span>${miniQty}</span>
+            <button onclick="changeQty('${miniKey}', 1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        ${(!item.hidePieceOption && eff.piecePrice != null) ? `
+        <div class="brownie-row">
+          <p class="option-label">By the single piece — ${formatCurrency(eff.piecePrice)} each</p>
+          <div class="stepper">
+            <button onclick="changeQty('${pieceKey}', -1)" aria-label="Decrease piece quantity">−</button>
+            <span>${pieceQty}</span>
+            <button onclick="changeQty('${pieceKey}', 1)" aria-label="Increase piece quantity">+</button>
+          </div>
+        </div>` : ''}
+      </div>`;
+    }
+
+
+    if (item.enquireOnly) {
+      const priceLine = eff.price != null ? `<p class="price">From ${formatCurrency(eff.price)}</p>` : '';
+      return `<div class="menu-card">${itemPhotoHtml(item)}${seasonalTag}${gfTag}<h3>${escapeHtml(item.name)}</h3>${noteHtml}${item.description ? `<p class="desc">${escapeHtml(item.description)}</p>` : ''}${priceLine}<button class="enquire-only-btn" onclick="goToEnquiry('${escapeHtml(item.name)}')">Enquire about this</button></div>`;
+    }
+
+    const qty = cart[item.id] || 0;
+    let priceLabel;
+    if (item.startingPrice) priceLabel = 'From ' + formatCurrency(eff.price);
+    else if (item.perPerson) priceLabel = formatCurrency(eff.price) + ' per person';
+    else priceLabel = formatCurrency(eff.price);
+    return `<div class="menu-card">${itemPhotoHtml(item)}${seasonalTag}${gfTag}<h3>${escapeHtml(item.name)}</h3>${noteHtml}${item.description ? `<p class="desc">${escapeHtml(item.description)}</p>` : ''}<p class="price">${priceLabel}</p>
+      <div class="stepper">
+        <button onclick="changeQty('${item.id}', -1)" aria-label="Decrease quantity">−</button>
+        <span>${qty}</span>
+        <button onclick="changeQty('${item.id}', 1)" aria-label="Increase quantity">+</button>
+      </div>
+    </div>`;
+  }
+
+  function resolveCartLine(key) {
+    let baseId = key, mode = null;
+    if (key.endsWith(':piece')) { baseId = key.slice(0, -6); mode = 'piece'; }
+    else if (key.endsWith(':large14')) { baseId = key.slice(0, -8); mode = 'large14'; }
+    else if (key.endsWith(':medium28')) { baseId = key.slice(0, -9); mode = 'medium28'; }
+    else if (key.endsWith(':mini40')) { baseId = key.slice(0, -7); mode = 'mini40'; }
+    else if (key.endsWith(':tier')) { baseId = key.slice(0, -5); mode = 'tier'; }
+    else if (key.endsWith(':tartlarge')) { baseId = key.slice(0, -10); mode = 'tartlarge'; }
+    else if (key.endsWith(':tartsmall')) { baseId = key.slice(0, -10); mode = 'tartsmall'; }
+    else if (key.endsWith(':tartdeep')) { baseId = key.slice(0, -9); mode = 'tartdeep'; }
+    else if (key.endsWith(':tartshallow')) { baseId = key.slice(0, -12); mode = 'tartshallow'; }
+    else if (key.endsWith(':box6')) { baseId = key.slice(0, -5); mode = 'box6'; }
+    else if (key.endsWith(':mini24')) { baseId = key.slice(0, -7); mode = 'mini24'; }
+    else if (key.endsWith(':gfbox6')) { baseId = key.slice(0, -7); mode = 'gfbox6'; }
+    else if (key.endsWith(':gfmini24')) { baseId = key.slice(0, -9); mode = 'gfmini24'; }
+    else if (key.endsWith(':small')) { baseId = key.slice(0, -6); mode = 'small'; }
+    else if (key.endsWith(':medium')) { baseId = key.slice(0, -7); mode = 'medium'; }
+    else if (key.endsWith(':large')) { baseId = key.slice(0, -6); mode = 'large'; }
+    const item = MENU_ITEMS.find(i => i.id === baseId);
+    if (!item) return null;
+    const eff = getEffectiveItem(item);
+    if (mode === 'piece') return { label: item.name + ' — by the piece', price: eff.piecePrice };
+    if (mode === 'large14' || mode === 'medium28' || mode === 'mini40') {
+      const tierPrices = getSlabTierPrices(item, eff);
+      const tierLabels = { large14: '14 large pieces', medium28: '28 medium pieces', mini40: '40 mini pieces' };
+      return { label: item.name + ' — ' + tierLabels[mode], price: tierPrices[mode] };
+    }
+    if (mode === 'tier') {
+      const qty = cart[key] || 0;
+      const total = getTieredTotal(eff.tieredPricing, qty);
+      return { label: item.name, price: qty > 0 ? total / qty : 0 };
+    }
+    if (mode === 'tartlarge') { const tp = getTartPricing(); return { label: item.name + ' — 6 large', price: tp.large }; }
+    if (mode === 'tartsmall') { const tp = getTartPricing(); return { label: item.name + ' — 12 small', price: tp.small }; }
+    if (mode === 'tartdeep') { const tp = getTartPricing(); return { label: item.name + ' — deep base', price: tp.deep }; }
+    if (mode === 'tartshallow') { const tp = getTartPricing(); return { label: item.name + ' — shallow base', price: tp.shallow }; }
+    if (mode === 'box6') { const cp = getCupcakePricing(); return { label: item.name + ' — box of 6', price: cp.box }; }
+    if (mode === 'mini24') { const cp = getCupcakePricing(); return { label: item.name + ' — 24 mini pieces', price: cp.mini24 }; }
+    if (mode === 'gfbox6') { const gcp = getGfCupcakePricing(); return { label: item.name + ' — box of 6 (gluten friendly)', price: gcp.box }; }
+    if (mode === 'gfmini24') { const gcp = getGfCupcakePricing(); return { label: item.name + ' — 24 mini pieces (gluten friendly)', price: gcp.mini24 }; }
+    if (mode === 'small' || mode === 'medium' || mode === 'large') {
+      const sizeInfo = (eff.platterSizes || []).find(s => s.key === mode);
+      if (sizeInfo) {
+        const addOnTotal = getSizeAddOnTotal(eff, mode);
+        const addOnLabel = getSizeAddOnLabel(eff, mode);
+        return { label: item.name + ' — ' + sizeInfo.label + addOnLabel, price: sizeInfo.price + addOnTotal };
+      }
+    }
+    return { label: item.name, price: eff.price };
+  }
+
+  function changeQty(key, delta) {
+    const baseId = key.replace(/:piece$|:large14$|:medium28$|:mini40$|:mini24$|:gfmini24$|:tier$|:tartlarge$|:tartsmall$|:tartdeep$|:tartshallow$|:box6$|:gfbox6$|:small$|:medium$|:large$/, '');
+    const item = MENU_ITEMS.find(i => i.id === baseId);
+    if (!item) return;
+    const eff = getEffectiveItem(item);
+    if (!eff.available) return;
+    const current = cart[key] || 0;
+    const minQty = item.minQuantity || (item.tieredPricing && item.tieredPricing.minQty) || 0;
+    let next = current + delta;
+    if (minQty > 0) {
+      if (delta > 0 && current === 0) next = minQty;
+      else if (delta < 0 && current === minQty) next = 0;
+    }
+    next = Math.max(0, next);
+    if (next === 0) delete cart[key]; else cart[key] = next;
+    renderMenu();
+    updateCartBar();
+  }
+
+  function calcTotal() {
+    return Object.entries(cart).reduce((sum, [key, qty]) => {
+      const line = resolveCartLine(key);
+      return sum + (line ? line.price * qty : 0);
+    }, 0);
+  }
+
+  function updateCartBar() {
+    const count = Object.values(cart).reduce((a, b) => a + b, 0);
+    document.getElementById('cartCount').textContent = count;
+    document.getElementById('navCartCount').textContent = count;
+    document.getElementById('cartBarTotal').textContent = formatCurrency(calcTotal());
+    document.getElementById('cartBar').style.display = count > 0 ? 'flex' : 'none';
+  }
+
+  function scrollToOrder() {
+    renderOrderSummary();
+    document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function renderOrderSummary() {
+    const el = document.getElementById('orderSummaryList');
+    const entries = Object.entries(cart);
+    if (entries.length === 0) {
+      el.innerHTML = '<p class="empty-note">Nothing added yet — pick something from the menu above.</p>';
+      return;
+    }
+    const rows = entries.map(([key, qty]) => {
+      const line = resolveCartLine(key);
+      if (!line) return '';
+      return `<div class="summary-row"><span>${escapeHtml(line.label)} × ${qty}</span><span>${formatCurrency(line.price * qty)}</span></div>`;
+    }).join('');
+    el.innerHTML = rows + `<div class="summary-row total"><span>Total</span><span>${formatCurrency(calcTotal())}</span></div>`;
+  }
+
+  function goToEnquiry(itemName) {
+    document.getElementById('enquire').scrollIntoView({ behavior: 'smooth' });
+    const msgField = document.querySelector('#enquiryForm textarea[name="message"]');
+    if (msgField && !msgField.value) {
+      msgField.value = `Hi! I'd love to ask about the ${itemName}. `;
+      msgField.focus();
+    }
+  }
+
+  function buildOrderText(order) {
+    const lines = [
+      `New order from ${order.name}`, '', 'Items:',
+      ...order.items.map(i => `- ${i.name} x${i.qty} (${formatCurrency(i.price * i.qty)})`),
+      '', `Total: ${formatCurrency(order.total)}`,
+      `Fulfillment: ${order.fulfillment}`, `Event date: ${order.neededBy}`,
+      `Phone: ${order.phone}`, `Email: ${order.email || 'n/a'}`,
+      `Allergens/preferences: ${order.notes || 'none'}`,
+      `Birthday topper/candles/colour theme: ${order.birthdayDetails || 'none'}`
+    ];
+    return lines.join('\n');
+  }
+
+  function buildEnquiryText(enq) {
+    const lines = [
+      `New enquiry from ${enq.name}`, '',
+      `Event date: ${enq.eventDate || 'n/a'}`, `Phone: ${enq.phone}`, `Email: ${enq.email || 'n/a'}`,
+      '', 'Details:', enq.message
+    ];
+    return lines.join('\n');
+  }
+
+  function openMailto(record, isEnquiry) {
+    const subject = encodeURIComponent((isEnquiry ? 'New enquiry — ' : 'New order — ') + 'The Little Cup Café');
+    const body = encodeURIComponent(isEnquiry ? buildEnquiryText(record) : buildOrderText(record));
+    window.location.href = `mailto:${BUSINESS_EMAIL}?subject=${subject}&body=${body}`;
+  }
+
+  // Reliable delivery: sends the order/enquiry straight to BUSINESS_EMAIL via FormSubmit
+  // (formsubmit.co — free, no account needed), so a booking doesn't depend on the
+  // customer's own phone/browser successfully opening and sending a mailto: draft.
+  // One-time setup: the very first submission triggers a confirmation email to
+  // BUSINESS_EMAIL — click the link in it once to activate delivery for every submission
+  // after that. If this call fails for any reason, submitOrder/submitEnquiry below still
+  // fall back to the old mailto: approach so nothing is silently lost either way.
+  async function sendOrderEmail(record, isEnquiry) {
+    const subject = (isEnquiry ? 'New enquiry — ' : 'New order — ') + 'The Little Cup Café';
+    const detailsText = isEnquiry ? buildEnquiryText(record) : buildOrderText(record);
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(BUSINESS_EMAIL), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: subject,
+          _captcha: 'false',
+          _replyto: record.email || '',
+          Name: record.name,
+          Phone: record.phone,
+          Email: record.email || 'n/a',
+          Details: detailsText
+        })
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Email delivery error', err);
+      return false;
+    }
+  }
+
+  async function submitOrder(e) {
+    e.preventDefault();
+    if (Object.keys(cart).length === 0) { alert('Please add at least one item to your order first.'); return; }
+    const form = e.target;
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+    const fulfillment = form.fulfillment.value;
+    const neededBy = form.neededBy.value;
+    const notes = form.notes.value.trim();
+    const birthdayDetails = form.birthdayDetails.value.trim();
+    if (!name || !phone || !neededBy) { alert('Please fill in your name, phone, and event date.'); return; }
+
+    const items = Object.entries(cart).map(([key, qty]) => {
+      const line = resolveCartLine(key);
+      return { name: line ? line.label : key, qty, price: line ? line.price : 0 };
+    });
+    const order = {
+      id: 'order-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      type: 'order', timestamp: new Date().toISOString(),
+      name, phone, email, fulfillment, neededBy, notes, birthdayDetails, items, total: calcTotal(), status: 'pending'
+    };
+    try { await window.storage.set(order.id, JSON.stringify(order), true); } catch (err) { console.error('Storage error', err); }
+
+    const emailed = await sendOrderEmail(order, false);
+    if (!emailed) openMailto(order, false);
+    showConfirmation('order');
+    cart = {};
+    addOnSelections = {};
+    form.reset();
+    renderMenu();
+    updateCartBar();
+  }
+
+  async function submitEnquiry(e) {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+    const eventDate = form.eventDate.value;
+    const message = form.message.value.trim();
+    if (!name || !phone || !message) { alert('Please fill in your name, phone, and a note about what you need.'); return; }
+
+    const enq = {
+      id: 'enquiry-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      type: 'enquiry', timestamp: new Date().toISOString(),
+      name, phone, email, eventDate, message, status: 'pending'
+    };
+    try { await window.storage.set(enq.id, JSON.stringify(enq), true); } catch (err) { console.error('Storage error', err); }
+
+    const emailed = await sendOrderEmail(enq, true);
+    if (!emailed) openMailto(enq, true);
+    showConfirmation('enquiry');
+    form.reset();
+  }
+
+  function showConfirmation(type) {
+    const overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmMessage').textContent = type === 'order'
+      ? "I've got your order. Expect a text from me soon with the final details and a deposit link — that's what locks in your date."
+      : "I've got your enquiry. Expect a text from me soon so I can chat through the details.";
+    overlay.classList.add('visible');
+  }
+  function closeConfirmation() { document.getElementById('confirmOverlay').classList.remove('visible'); }
+
+  function toggleAdminLogin(e) {
+    e.preventDefault();
+    const box = document.getElementById('adminLoginBox');
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function checkAdminLogin() {
+    const input = document.getElementById('adminPasscodeInput').value;
+    if (input === ADMIN_PASSCODE) {
+      document.getElementById('adminLoginBox').style.display = 'none';
+      const dash = document.getElementById('adminDashboard');
+      dash.style.display = 'block';
+      // Live editing/storage only works while this page runs inside Claude's own preview —
+      // on your own hosting there's nowhere for it to save to, so this shows guidance instead
+      // of the old editors. See the "Save"/upload code further up if that ever changes.
+      dash.innerHTML = `
+        <h3 class="admin-heading">Orders &amp; enquiries</h3>
+        <p class="empty-note">New orders and enquiries now go straight to <strong>${escapeHtml(BUSINESS_EMAIL)}</strong> — check that inbox (and its spam folder). This page can't store or list them here once it's hosted outside Claude.</p>
+        <h3 class="admin-heading">Changing prices, availability, or photos</h3>
+        <p class="empty-note">Live editing here won't save once the site is hosted outside Claude. To change a price, mark something unavailable, or add a photo, come back to your Claude conversation and describe the change — it'll get built directly into the site for you to re-upload.</p>
+      `;
+    } else {
+      document.getElementById('adminError').textContent = 'Incorrect passcode.';
+    }
+  }
+
+  async function loadOrdersForAdmin() {
+    const listEl = document.getElementById('adminOrdersList');
+    listEl.innerHTML = '<p class="empty-note">Loading…</p>';
+    try {
+      const orderKeys = await window.storage.list('order-', true);
+      const enqKeys = await window.storage.list('enquiry-', true);
+      const allKeys = [...(orderKeys?.keys || []), ...(enqKeys?.keys || [])];
+      if (allKeys.length === 0) {
+        listEl.innerHTML = '<p class="empty-note">No orders or enquiries yet.</p>';
+        return;
+      }
+      const records = [];
+      for (const k of allKeys) {
+        try {
+          const res = await window.storage.get(k, true);
+          if (res) records.push(JSON.parse(res.value));
+        } catch (e) { /* skip unreadable record */ }
+      }
+      records.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      adminRecordsCache = {};
+      records.forEach(r => adminRecordsCache[r.id] = r);
+      listEl.innerHTML = records.map(adminRecordTemplate).join('');
+    } catch (err) {
+      listEl.innerHTML = '<p class="empty-note">Could not load orders right now — try again in a moment.</p>';
+    }
+  }
+
+  function adminRecordTemplate(r) {
+    const date = new Date(r.timestamp).toLocaleString();
+    const body = r.type === 'order'
+      ? `<ul style="padding-left:18px; margin-bottom:8px;">${r.items.map(i => `<li>${escapeHtml(i.name)} x${i.qty} — ${formatCurrency(i.price * i.qty)}</li>`).join('')}</ul><p><strong>Total: ${formatCurrency(r.total)}</strong></p><p>${escapeHtml(r.fulfillment)} · Event date: ${escapeHtml(r.neededBy)}</p>${r.birthdayDetails ? `<p>Birthday topper/candles/colour theme: ${escapeHtml(r.birthdayDetails)}</p>` : ''}`
+      : `<p>Event date: ${escapeHtml(r.eventDate || 'n/a')}</p><p>${escapeHtml(r.message)}</p>`;
+    return `<div class="admin-card ${r.status === 'confirmed' ? 'confirmed' : ''}">
+      <div class="admin-card-head"><span>${r.type === 'order' ? 'ORDER' : 'ENQUIRY'}</span><span>${r.status === 'confirmed' ? 'Confirmed' : 'Pending'}</span></div>
+      <p><strong>${escapeHtml(r.name)}</strong> · ${escapeHtml(r.phone)} ${r.email ? '· ' + escapeHtml(r.email) : ''}</p>
+      <p class="admin-date">${date}</p>
+      ${body}
+      ${r.notes ? `<p>Allergens/preferences: ${escapeHtml(r.notes)}</p>` : ''}
+      <div class="admin-actions">
+        ${r.status !== 'confirmed' ? `<button onclick="markConfirmed('${r.id}')">Mark as confirmed</button>` : ''}
+        <button onclick="copyDetails('${r.id}')">Copy details</button>
+      </div>
+    </div>`;
+  }
+
+  async function markConfirmed(id) {
+    const r = adminRecordsCache[id];
+    if (!r) return;
+    r.status = 'confirmed';
+    try { await window.storage.set(id, JSON.stringify(r), true); } catch (e) { console.error(e); }
+    loadOrdersForAdmin();
+  }
+
+  function copyDetails(id) {
+    const r = adminRecordsCache[id];
+    if (!r) return;
+    const text = r.type === 'order' ? buildOrderText(r) : buildEnquiryText(r);
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Details copied — paste this into a text message.');
+    }).catch(() => {
+      alert('Could not copy automatically — please copy the details manually.');
+    });
+  }
+
+  function renderTartPricingEditor() {
+    const tp = getTartPricing();
+    const el = document.getElementById('adminTartPricing');
+    el.innerHTML = `
+      <div class="editor-row">
+        <span class="editor-name">6 large tarts</span>
+        <label>$ <input type="number" step="0.01" min="0" id="tart-large-price" value="${tp.large}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">12 small tarts</span>
+        <label>$ <input type="number" step="0.01" min="0" id="tart-small-price" value="${tp.small}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">Deep base tart, starting price</span>
+        <label>$ <input type="number" step="0.01" min="0" id="tart-deep-price" value="${tp.deep}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">Shallow base tart, starting price</span>
+        <label>$ <input type="number" step="0.01" min="0" id="tart-shallow-price" value="${tp.shallow}"></label>
+      </div>
+    `;
+  }
+
+  function renderCupcakePricingEditor() {
+    const cp = getCupcakePricing();
+    const el = document.getElementById('adminCupcakePricing');
+    el.innerHTML = `
+      <div class="editor-row">
+        <span class="editor-name">Box of 6 cupcakes, starting price</span>
+        <label>$ <input type="number" step="0.01" min="0" id="cupcake-box-price" value="${cp.box}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">Mini cupcakes, box of 24, starting price</span>
+        <label>$ <input type="number" step="0.01" min="0" id="cupcake-mini24-price" value="${cp.mini24}"></label>
+      </div>
+    `;
+  }
+
+  function renderGfCupcakePricingEditor() {
+    const gcp = getGfCupcakePricing();
+    const el = document.getElementById('adminGfCupcakePricing');
+    el.innerHTML = `
+      <div class="editor-row">
+        <span class="editor-name">Box of 6 gluten-friendly cupcakes</span>
+        <label>$ <input type="number" step="0.01" min="0" id="gf-cupcake-box-price" value="${gcp.box}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">Mini gluten-friendly cupcakes, box of 24</span>
+        <label>$ <input type="number" step="0.01" min="0" id="gf-cupcake-mini24-price" value="${gcp.mini24}"></label>
+      </div>
+    `;
+  }
+
+  function renderSlabUpchargeEditor() {
+    const su = getSlabSizeUpcharge();
+    const el = document.getElementById('adminSlabUpcharge');
+    el.innerHTML = `
+      <div class="editor-row">
+        <span class="editor-name">28 medium pieces — extra on top of the 14-piece price</span>
+        <label>+$ <input type="number" step="0.01" min="0" id="slab-upcharge-medium" value="${su.medium}"></label>
+      </div>
+      <div class="editor-row">
+        <span class="editor-name">40 mini pieces — extra on top of the 14-piece price</span>
+        <label>+$ <input type="number" step="0.01" min="0" id="slab-upcharge-mini" value="${su.mini}"></label>
+      </div>
+      <p class="option-note">Applies to Brownies &amp; Blondies, Sweet Tray Bakes, and the Gluten Friendly brownies. Each item's "Slab $" below still sets its 14-piece price.</p>
+    `;
+  }
+
+  function renderMenuEditor() {
+    const el = document.getElementById('adminMenuEditor');
+    el.innerHTML = MENU_ITEMS.map(item => {
+      const eff = getEffectiveItem(item);
+      if (item.isTart) {
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.isCupcake) {
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.isGfCupcake) {
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.isInfoCard) {
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.isPlatter) {
+        const sizeInputs = eff.platterSizes.map(s =>
+          `<label>${escapeHtml(s.key)} serving text <input type="text" id="platter-label-${item.id}-${s.key}" value="${escapeHtml(s.label)}" style="width:170px;"></label>
+          <label>$ <input type="number" step="0.01" min="0" id="platter-${item.id}-${s.key}" value="${s.price}"></label>`
+        ).join(' ');
+        const addOnInputs = (eff.addOns || []).map(addOn =>
+          eff.platterSizes.map(s =>
+            `<label>${escapeHtml(addOn.name)} add-on (${escapeHtml(s.key)}) $ <input type="number" step="0.01" min="0" id="addon-${item.id}-${addOn.id}-${s.key}" value="${addOn.pricesBySize[s.key] || 0}"></label>`
+          ).join(' ')
+        ).join(' ');
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          ${sizeInputs}
+          ${addOnInputs}
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.tieredPricing) {
+        const tp = eff.tieredPricing;
+        return `<div class="editor-row">
+          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label>Min qty <input type="number" step="1" min="1" id="tier-minqty-${item.id}" value="${tp.minQty}"></label>
+          <label>Base $ <input type="number" step="0.01" min="0" id="tier-base-${item.id}" value="${tp.basePrice}"></label>
+          <label>Extra $/unit <input type="number" step="0.01" min="0" id="tier-extra-${item.id}" value="${tp.extraPerUnit}"></label>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      if (item.slabPrice !== undefined) {
+        return `<div class="editor-row">          <span class="editor-name">${escapeHtml(item.name)}</span>
+          <label>Slab $ <input type="number" step="0.01" min="0" id="slabprice-${item.id}" value="${eff.slabPrice}"></label>
+          <label>Piece $ <input type="number" step="0.01" min="0" id="pieceprice-${item.id}" value="${eff.piecePrice != null ? eff.piecePrice : ''}" placeholder="n/a"></label>
+          <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+          ${photoEditorHtml(item.id)}
+        </div>`;
+      }
+      return `<div class="editor-row">
+        <span class="editor-name">${escapeHtml(item.name)}</span>
+        <label>$ <input type="number" step="0.01" min="0" id="price-${item.id}" value="${eff.price != null ? eff.price : ''}" placeholder="ask for pricing"></label>
+        <label><input type="checkbox" id="avail-${item.id}" ${eff.available ? 'checked' : ''}> Available</label>
+        ${photoEditorHtml(item.id)}
+      </div>`;
+    }).join('');
+  }
+
+  async function saveMenuChanges() {
+    const overrides = {};
+    MENU_ITEMS.forEach(item => {
+      const availInput = document.getElementById('avail-' + item.id);
+      if (item.isTart) {
+        overrides[item.id] = { available: availInput.checked };
+        return;
+      }
+      if (item.isCupcake) {
+        overrides[item.id] = { available: availInput.checked };
+        return;
+      }
+      if (item.isGfCupcake) {
+        overrides[item.id] = { available: availInput.checked };
+        return;
+      }
+      if (item.isInfoCard) {
+        overrides[item.id] = { available: availInput.checked };
+        return;
+      }
+      if (item.isPlatter) {
+        const sizes = {};
+        item.platterSizes.forEach(s => {
+          const priceInput = document.getElementById(`platter-${item.id}-${s.key}`);
+          const labelInput = document.getElementById(`platter-label-${item.id}-${s.key}`);
+          const val = parseFloat(priceInput.value);
+          const labelVal = labelInput ? labelInput.value.trim() : '';
+          sizes[s.key] = { price: isNaN(val) ? s.price : val, label: labelVal === '' ? s.label : labelVal };
+        });
+        const platterOverride = { sizes, available: availInput.checked };
+        if (item.addOns && item.addOns.length) {
+          const addOnPrices = {};
+          item.addOns.forEach(addOn => {
+            const sizePrices = {};
+            item.platterSizes.forEach(s => {
+              const addOnInput = document.getElementById(`addon-${item.id}-${addOn.id}-${s.key}`);
+              const addOnVal = addOnInput ? parseFloat(addOnInput.value) : NaN;
+              sizePrices[s.key] = isNaN(addOnVal) ? (addOn.pricesBySize[s.key] || 0) : addOnVal;
+            });
+            addOnPrices[addOn.id] = sizePrices;
+          });
+          platterOverride.addOnPrices = addOnPrices;
+        }
+        overrides[item.id] = platterOverride;
+        return;
+      }
+      if (item.tieredPricing) {
+        const minQtyInput = document.getElementById('tier-minqty-' + item.id);
+        const baseInput = document.getElementById('tier-base-' + item.id);
+        const extraInput = document.getElementById('tier-extra-' + item.id);
+        const minQty = parseInt(minQtyInput.value, 10);
+        const basePrice = parseFloat(baseInput.value);
+        const extraPerUnit = parseFloat(extraInput.value);
+        overrides[item.id] = {
+          tieredPricing: {
+            minQty: isNaN(minQty) ? item.tieredPricing.minQty : minQty,
+            basePrice: isNaN(basePrice) ? item.tieredPricing.basePrice : basePrice,
+            extraPerUnit: isNaN(extraPerUnit) ? item.tieredPricing.extraPerUnit : extraPerUnit
+          },
+          available: availInput.checked
+        };
+        return;
+      }
+      if (item.slabPrice !== undefined) {
+        const slabInput = document.getElementById('slabprice-' + item.id);
+        const pieceInput = document.getElementById('pieceprice-' + item.id);
+        const slabPrice = parseFloat(slabInput.value);
+        const pieceVal = pieceInput.value.trim();
+        const piecePrice = pieceVal === '' ? null : parseFloat(pieceVal);
+        overrides[item.id] = { slabPrice: isNaN(slabPrice) ? item.slabPrice : slabPrice, piecePrice: (piecePrice === null || isNaN(piecePrice)) ? null : piecePrice, available: availInput.checked };
+      } else {
+        const priceInput = document.getElementById('price-' + item.id);
+        const priceVal = priceInput.value.trim();
+        const price = priceVal === '' ? null : parseFloat(priceVal);
+        overrides[item.id] = { price: (price === null || isNaN(price)) ? null : price, available: availInput.checked };
+      }
+    });
+    const tartLargeInput = document.getElementById('tart-large-price');
+    const tartSmallInput = document.getElementById('tart-small-price');
+    const tartDeepInput = document.getElementById('tart-deep-price');
+    const tartShallowInput = document.getElementById('tart-shallow-price');
+    const tartLarge = parseFloat(tartLargeInput.value);
+    const tartSmall = parseFloat(tartSmallInput.value);
+    const tartDeep = parseFloat(tartDeepInput.value);
+    const tartShallow = parseFloat(tartShallowInput.value);
+    overrides['_tartPricing'] = {
+      large: isNaN(tartLarge) ? TART_PRICING_DEFAULT.large : tartLarge,
+      small: isNaN(tartSmall) ? TART_PRICING_DEFAULT.small : tartSmall,
+      deep: isNaN(tartDeep) ? TART_PRICING_DEFAULT.deep : tartDeep,
+      shallow: isNaN(tartShallow) ? TART_PRICING_DEFAULT.shallow : tartShallow
+    };
+    const cupcakeBoxInput = document.getElementById('cupcake-box-price');
+    const cupcakeMini24Input = document.getElementById('cupcake-mini24-price');
+    const cupcakeBox = parseFloat(cupcakeBoxInput.value);
+    const cupcakeMini24 = parseFloat(cupcakeMini24Input.value);
+    overrides['_cupcakePricing'] = {
+      box: isNaN(cupcakeBox) ? CUPCAKE_PRICING_DEFAULT.box : cupcakeBox,
+      mini24: isNaN(cupcakeMini24) ? CUPCAKE_PRICING_DEFAULT.mini24 : cupcakeMini24
+    };
+    const gfCupcakeBoxInput = document.getElementById('gf-cupcake-box-price');
+    const gfCupcakeMini24Input = document.getElementById('gf-cupcake-mini24-price');
+    const gfCupcakeBox = parseFloat(gfCupcakeBoxInput.value);
+    const gfCupcakeMini24 = parseFloat(gfCupcakeMini24Input.value);
+    overrides['_gfCupcakePricing'] = {
+      box: isNaN(gfCupcakeBox) ? GF_CUPCAKE_PRICING_DEFAULT.box : gfCupcakeBox,
+      mini24: isNaN(gfCupcakeMini24) ? GF_CUPCAKE_PRICING_DEFAULT.mini24 : gfCupcakeMini24
+    };
+    const slabUpchargeMediumInput = document.getElementById('slab-upcharge-medium');
+    const slabUpchargeMiniInput = document.getElementById('slab-upcharge-mini');
+    const slabUpchargeMedium = parseFloat(slabUpchargeMediumInput.value);
+    const slabUpchargeMini = parseFloat(slabUpchargeMiniInput.value);
+    overrides['_slabSizeUpcharge'] = {
+      medium: isNaN(slabUpchargeMedium) ? SLAB_SIZE_UPCHARGE_DEFAULT.medium : slabUpchargeMedium,
+      mini: isNaN(slabUpchargeMini) ? SLAB_SIZE_UPCHARGE_DEFAULT.mini : slabUpchargeMini
+    };
+    try {
+      await window.storage.set('menu-overrides', JSON.stringify(overrides), true);
+      menuOverrides = overrides;
+      renderMenu();
+      renderSeasonalCallout();
+      alert('Menu updated.');
+    } catch (e) {
+      alert('Could not save changes — please try again.');
+    }
+  }
+
+  function setupReveal() {
+    const els = document.querySelectorAll('.reveal');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(el => el.classList.add('in-view'));
+      return;
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('in-view'); obs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(el => obs.observe(el));
+  }
+
+  init();
+</script>
+</body>
+</html>
